@@ -15,7 +15,7 @@ public class ExceptionsHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> NotFoundExceptionHandler(NotFoundException exception) {
+    public Map<String, String> handleNotFoundExceptionHandler(NotFoundException exception) {
         log.error("Объект не найден :( ", exception);
         return Map.of(
                 "ERROR", "Объект не найден :( ",
@@ -25,7 +25,7 @@ public class ExceptionsHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> NotValidExceptionHandler(NotValidException exception) {
+    public Map<String, String> handleNotValidExceptionHandler(NotValidException exception) {
         log.error("Неверно введены данные ", exception);
         return Map.of(
                 "ERROR", "Неверно введены данные ",
@@ -35,7 +35,7 @@ public class ExceptionsHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> EmailExceptionHandler(EmailException exception) {
+    public Map<String, String> handleEmailExceptionHandler(EmailException exception) {
         log.error(exception.getMessage());
         return Map.of("ERROR", exception.getMessage());
     }
