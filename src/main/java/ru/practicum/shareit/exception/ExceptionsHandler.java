@@ -35,7 +35,7 @@ public class ExceptionsHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> EmailExceptionHandler(ExceptionEmail exception) {
+    public Map<String, String> EmailExceptionHandler(EmailException exception) {
         log.error(exception.getMessage());
         return Map.of("ERROR", exception.getMessage());
     }

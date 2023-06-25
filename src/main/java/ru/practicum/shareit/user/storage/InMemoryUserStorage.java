@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.ExceptionEmail;
+import ru.practicum.shareit.exception.EmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
@@ -69,7 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
                 .anyMatch(
                         stored -> stored.getEmail().equalsIgnoreCase(user.getEmail())
                                 && stored.getId() != user.getId())) {
-            throw new ExceptionEmail("Пользователь с таким mail " +
+            throw new EmailException("Пользователь с таким mail " +
                     user.getEmail() + " уже зарегистрирован ");
         }
 
