@@ -98,7 +98,6 @@ public class ItemService {
         newItem.setOwner(owner);
     }
     
-
     private void checkItemForUser(Item item, Item oldItem, long userId) {
 
         if (oldItem.getOwner().getId() != userId) {
