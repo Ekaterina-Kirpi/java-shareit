@@ -34,7 +34,7 @@ public class ItemService {
     public List<ItemDto> getAllItemsByUserId(Long userId) {
         return itemStorage.getAll()
                 .stream()
-                .filter(i -> Objects.equals(i.getOwner().getId(), userId))
+                .filter(item -> Objects.equals(item.getOwner().getId(), userId))
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -70,14 +70,18 @@ public class ItemService {
         }
         return itemStorage.getAll()
                 .stream()
-                .filter(i -> i.getDescription().toLowerCase().contains(text.toLowerCase()) && i.getAvailable())
+                .filter(item ->
+                        item.getName().toLowerCase().contains(text.toLowerCase())
+                                || item.getDescription().toLowerCase().contains(text.toLowerCase())
+                                && item.getAvailable())
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
     private void checkItems(Item item) {
-        if (!itemStorage.getAll().contains(itemStorage.getById(item.getId()))) {
-            throw new NotFoundException("Вещь с id: " + itemStorage.getById(item.getId()) + " не найдена");
+        Item itemCheck = itemStorage.getById(item.getId());
+        if (!itemStorage.getAll().contains(itemCheck)) {
+            throw new NotFoundException("Вещь с id: " + itemCheck.getId() + " не найдена");
         }
         if (item.getName().isBlank()) {
             throw new NotValidException("У вещи должно быть название");
@@ -90,10 +94,10 @@ public class ItemService {
     private void checkUser(User owner, Item newItem, long id) {
         if (owner == null) {
             throw new NotFoundException(String.format("Пользователь с id: " + id + " не найден"));
-        } else {
-            newItem.setOwner(owner);
         }
+        newItem.setOwner(owner);
     }
+    
 
     private void checkItemForUser(Item item, Item oldItem, long userId) {
 

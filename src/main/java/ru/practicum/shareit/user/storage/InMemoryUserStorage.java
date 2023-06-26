@@ -19,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
         checkEmail(user);
         user.setId(++id);
         users.put(user.getId(), user);
-        return users.get(user.getId());
+        return user;
     }
 
     @Override
@@ -33,8 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getEmail() != null && !user.getEmail().isEmpty()) {
             userUp.setEmail(user.getEmail());
         }
-        users.put(userUp.getId(), userUp);
-        return users.get(userUp.getId());
+        return userUp;
     }
 
 
@@ -51,9 +50,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Boolean delete(Long userId) {
-        checkUserId(userId);
-        users.remove(userId);
-        return !users.containsKey(id);
+        return users.remove(userId) != null;
 
     }
 
