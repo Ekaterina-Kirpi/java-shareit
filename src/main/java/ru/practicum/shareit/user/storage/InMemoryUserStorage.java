@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.EmailException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.validation.exception.EmailException;
+import ru.practicum.shareit.validation.exception.UserOrItemNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
@@ -56,7 +56,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     public void checkUserId(Long id) {
         if (id != 0 && !users.containsKey(id)) {
-            throw new NotFoundException("Пользователь с id: " + id + " не найден");
+            throw new UserOrItemNotFoundException("Пользователь с id: " + id + " не найден");
 
         }
     }

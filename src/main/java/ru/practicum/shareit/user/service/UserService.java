@@ -1,46 +1,76 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.validation.exception.DataException;
+import ru.practicum.shareit.validation.exception.UserOrItemNotFoundException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static org.hibernate.cfg.AvailableSettings.USER;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserMapper userMapper;
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
 
-    public UserDto getUser(Long id) {
-        return userMapper.toUserDto(userStorage.getById(id));
+    public UserDto createUser(UserDto userDto) {
+        User user = userMapper.userFromDto(userDto);
+        User userSaved = userRepository.save(user);
+        return userMapper.userToDto(userSaved);
     }
 
+    @Transactional
+    public UserDto updateUser(Long id, UserDto userDto) {
+        User user = userMapper.userFromDto(userDto);
+        User userUp = userRepository.findById(id).orElseThrow(() -> new DataException(USER, id));
+        if (StringUtils.hasLength(user.getEmail())) {
+            userUp.setEmail(user.getEmail());
+        }
+        if (StringUtils.hasLength(user.getName())) {
+            userUp.setName(user.getName());
+        }
+        User userSave = userRepository.save(userUp);
 
+
+        return userMapper.userToDto(userSave);
+    }
+
+    @Transactional(readOnly = true)
+    //Возвращает Пользователя User по идентификатору
+    public User getUserById(long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new UserOrItemNotFoundException("Пользователь с id: " + userId + " не найден"));
+    }
+
+    @Transactional(readOnly = true)
+    //Возвращает Пользователя UserDto по идентификатору
+    public UserDto getUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new UserOrItemNotFoundException("Пользователь с id: " + userId + " не найден"));
+        return userMapper.userToDto(user);
+    }
+
+    @Transactional(readOnly = true)
     public Collection<UserDto> getAllUsers() {
-        return userStorage.getAll()
+        return userRepository.findAll()
                 .stream()
-                .map(userMapper::toUserDto)
+                .map(userMapper::userToDto)
                 .collect(Collectors.toList());
     }
 
-
-    public UserDto createUser(UserDto userDto) {
-        User user = userStorage.create(userMapper.toUser(userDto));
-        return userMapper.toUserDto(user);
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 
-
-    public UserDto updateUser(UserDto userDto, Long id) {
-        userDto.setId(id);
-        return userMapper.toUserDto(userStorage.update(userMapper.toUser(userDto)));
-    }
-
-    public Boolean deleteUser(Long id) {
-        return userStorage.delete(id);
-    }
 }
