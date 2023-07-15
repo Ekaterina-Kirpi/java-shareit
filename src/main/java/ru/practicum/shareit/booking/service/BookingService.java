@@ -188,7 +188,7 @@ public class BookingService {
     }
 
     private void checkBooking(Long bookerId, Booking booking, Item item) {
-        if (bookerId == item.getUserId()) {
+        if (bookerId.equals(item.getUserId())) {
             throw new AccessException("Владелец вещи не может бронировать свои вещи");
         }
         if (!item.getAvailable()) {

@@ -51,7 +51,7 @@ public class ItemService {
         List<BookingLimitDto> bookingLimit = bookings.stream()
                 .map(bookingMapper::bookingLimitToDto)
                 .collect(Collectors.toList());
-        if (item.getUserId() == userId) {   // Бронирования показываем только владельцу вещи
+        if (item.getUserId().equals(userId)) {   // Бронирования показываем только владельцу вещи
             setBookings(itemDto, bookingLimit);
         }
         List<Comment> comments = commentRepository.findAllByItemId(itemId,
@@ -164,11 +164,11 @@ public class ItemService {
 
     private void setBookings(ItemDto itemDto, List<BookingLimitDto> bookings) {
         itemDto.setLastBooking(bookings.stream()
-                .filter(booking -> booking.getItem().getId() == itemDto.getId() &&
+                .filter(booking -> booking.getItem().getId().equals(itemDto.getId()) &&
                         booking.getStart().isBefore(LocalDateTime.now()))
                 .reduce((a, b) -> b).orElse(null));
         itemDto.setNextBooking(bookings.stream()
-                .filter(booking -> booking.getItem().getId() == itemDto.getId() &&
+                .filter(booking -> booking.getItem().getId().equals(itemDto.getId()) &&
                         booking.getStart().isAfter(LocalDateTime.now()))
                 .reduce((a, b) -> a).orElse(null));
     }
@@ -176,7 +176,7 @@ public class ItemService {
 
     private void setComments(ItemDto itemDto, List<Comment> comments) {
         itemDto.setComments(comments.stream()
-                .filter(comment -> comment.getItem().getId() == itemDto.getId())
+                .filter(comment -> comment.getItem().getId().equals(itemDto.getId()))
                 .map(commentMapper::commentToDto)
                 .collect(Collectors.toList()));
     }
