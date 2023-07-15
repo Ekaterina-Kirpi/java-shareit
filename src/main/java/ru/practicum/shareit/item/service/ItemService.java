@@ -70,13 +70,11 @@ public class ItemService {
         List<ItemDto> itemsDto = items.stream()
                 .map(itemMapper::itemToDto)
                 .collect(Collectors.toList());
-        //Logger.logInfo(HttpMethod.GET, "/items",  items.toString());
         List<Booking> bookings = bookingRepository.findAllByOwnerId(userId,
                 Sort.by(Sort.Direction.ASC, "start"));
         List<BookingLimitDto> bookingLimitDtoList = bookings.stream()
                 .map(bookingMapper::bookingLimitToDto)
                 .collect(Collectors.toList());
-        //Logger.logInfo(HttpMethod.GET, "/items",  bookings.toString());
         List<Comment> comments = commentRepository.findAllByItemIdIn(
                 items.stream()
                         .map(Item::getId)
@@ -152,9 +150,8 @@ public class ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new UserOrItemNotFoundException(
                 ("Вещь с id: " + itemId + " не найдена")));
         List<Booking> bookings = bookingRepository.findAllByItemIdAndBookerIdAndStatus(itemId, userId, BookingStatus.APPROVED,
-                Sort.by(Sort.Direction.DESC, "start")).orElseThrow(() -> new UserOrItemNotFoundException(
-                String.format("Пользователь с id %d не арендовал вещь с id %d.", userId, itemId)));
-        //Logger.logInfo(HttpMethod.POST, "/items/" + itemId + "/comment", bookings.toString());
+                Sort.by(Sort.Direction.DESC, "start")).orElseThrow(() ->
+                new UserOrItemNotFoundException("Пользователь с id: " + userId + " не арендовал вещь с id: " + itemId));
         bookings.stream().filter(booking -> booking.getEnd().isBefore(LocalDateTime.now())).findAny().orElseThrow(() ->
                 new UserOrItemNotValidException("Пользователь с id: " + userId +
                         " не может оставлять комментарии к вещи с id: " + itemId));
