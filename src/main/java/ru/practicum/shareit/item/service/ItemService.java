@@ -87,6 +87,7 @@ public class ItemService {
         return itemsDto;
     }
 
+    @Transactional
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         Item newItem = itemMapper.itemFromDto(itemDto);
         User owner = userService.getUserById(userId);

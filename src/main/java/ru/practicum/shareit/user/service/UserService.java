@@ -20,6 +20,7 @@ import static org.hibernate.cfg.AvailableSettings.USER;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
@@ -30,7 +31,7 @@ public class UserService {
         return userMapper.userToDto(userSaved);
     }
 
-    @Transactional
+
     public UserDto updateUser(Long id, UserDto userDto) {
         User user = userMapper.userFromDto(userDto);
         User userUp = userRepository.findById(id).orElseThrow(() -> new DataException(USER, id));
