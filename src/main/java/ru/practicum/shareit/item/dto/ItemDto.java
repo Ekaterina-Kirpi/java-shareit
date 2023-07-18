@@ -3,26 +3,27 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.booking.dto.BookingLimitDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Нужно представиться :)")
     private String name;
-    @NotBlank
+
+    @NotBlank(message = "Описание должно быть заполнено.")
     private String description;
-    @NotNull
+
+    @NotNull(message = "Поле не должно быть пустым.")
     private Boolean available;
-    private User owner;
-    private ItemRequest request;
+    private BookingLimitDto lastBooking;
+    private BookingLimitDto nextBooking;
+    private List<CommentDto> comments;
 }
