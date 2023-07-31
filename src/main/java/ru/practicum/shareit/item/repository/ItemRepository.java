@@ -1,19 +1,24 @@
 package ru.practicum.shareit.item.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
+    List<Item> findAllByOwnerIdOrderByIdAsc(Pageable pageable, Long ownerId);
 
-    List<Item> findAllByUserIdOrderById(long userId);
 
-    @Query(value = "select i from Item i where lower(i.name) like %:text% or lower(i.description) like %:text% " +
-            "and i.available=true")
-    List<Item> findByNameOrDescriptionLike(@Param("text") String text);
+    Boolean existsItemByOwnerId(Long ownerId);
 
-    void deleteById(long itemId);
+    List<Item> findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(Pageable pageable,
+                                                                                                  String name,
+                                                                                                  String description);
+
+    @Query("SELECT i.id FROM Item AS i " +
+            "JOIN User AS u ON i.owner.id=u.id " +
+            "WHERE i.owner.id = ?1")
+    List<Long> findAllItemIdByOwnerId(Long ownerId);
 }

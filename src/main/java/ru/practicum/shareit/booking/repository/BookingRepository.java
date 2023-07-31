@@ -1,46 +1,46 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import ru.practicum.shareit.booking.enam.Status;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
+    List<Booking> findAllByBookerIdOrderByStartDesc(Pageable pageable, Long bookerId);
 
+    List<Booking> findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+            Pageable pageable, Long bookerId, LocalDateTime start, LocalDateTime end);
 
-    List<Booking> findAllByBookerId(Long bookerId, Sort sort);
+    List<Booking> findAllByBookerIdAndEndIsBeforeOrderByStartDesc(Pageable pageable, Long bookerId, LocalDateTime end);
 
-    List<Booking> findAllByBookerIdAndStatus(Long bookerId, BookingStatus status, Sort sort);
+    List<Booking> findAllByBookerIdAndStartIsAfterOrderByStartDesc(
+            Pageable pageable, Long bookerId, LocalDateTime start);
 
-    List<Booking> findAllByBookerIdAndStartAfter(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    List<Booking> findAllByBookerIdAndStatusIsOrderByStartDesc(Pageable pageable, Long bookerId, Status status);
 
-    List<Booking> findAllByBookerIdAndEndBefore(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    List<Booking> findAllByItemIdInOrderByStartDesc(Pageable pageable, Collection<Long> itemId);
 
-    @Query(value = "select b from Booking b where b.booker.id = ?1 and b.start < ?2 and b.end > ?2")
-    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    List<Booking> findAllByItemIdInAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+            Pageable pageable, Collection<Long> itemId, LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "select b from Booking b where b.item.userId = ?1")
-    List<Booking> findAllByOwnerId(Long ownerId, Sort sort);
+    List<Booking> findAllByItemIdInAndEndIsBeforeOrderByStartDesc(
+            Pageable pageable, Collection<Long> itemId, LocalDateTime end);
 
-    @Query(value = "select b from Booking b where b.item.userId = ?1 and b.status = ?2")
-    List<Booking> findAllByOwnerIdAndStatus(Long ownerId, BookingStatus status, Sort sort);
+    List<Booking> findAllByItemIdInAndStartIsAfterOrderByStartDesc(
+            Pageable pageable, Collection<Long> itemId, LocalDateTime start);
 
-    @Query(value = "select b from Booking b where b.item.userId = ?1 and b.start > ?2")
-    List<Booking> findAllByOwnerIdAndStartAfter(Long ownerId, LocalDateTime localDateTime, Sort sort);
+    List<Booking> findAllByItemIdInAndStatusIsOrderByStartDesc(
+            Pageable pageable, Collection<Long> itemId, Status status);
 
-    @Query(value = "select b from Booking b where b.item.userId = ?1 and b.end < ?2")
-    List<Booking> findAllByOwnerIdAndEndBefore(Long ownerId, LocalDateTime localDateTime, Sort sort);
+    Optional<Booking> findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(Long itemId, LocalDateTime end, Status status);
 
-    @Query(value = "select b from Booking b where b.item.userId = ?1 and b.start < ?2 and b.end > ?2")
-    List<Booking> findAllByOwnerIdAndStartBeforeAndEndAfter(Long bookerId, LocalDateTime localDateTime, Sort sort);
+    Optional<Booking> findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(Long itemId, LocalDateTime start, Status status);
 
-    List<Booking> findByItemIdAndStatus(Long itemId, BookingStatus status, Sort sort);
-
-    Optional<List<Booking>> findAllByItemIdAndBookerIdAndStatus(Long itemId, Long bookerId, BookingStatus status, Sort sort);
-
+    Boolean existsBookingByItemIdAndBookerIdAndStatusAndEndIsBefore(
+            Long itemId, Long bookerId, Status status, LocalDateTime end);
 }
