@@ -76,9 +76,9 @@ public class ItemRequestControllerTest {
         mvc.perform(post("/requests")
                         .header(userIdHeader, 1)
                         .content(objectMapper.writeValueAsString(itemRequestDto))
-                        .contentType(MediaType.APPLICATION_JSON)).andDo(print()).
+                        .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
-                        andExpectAll(status().isOk(),
+                .andExpectAll(status().isOk(),
                         content().json(objectMapper.writeValueAsString(itemRequestDtoResponse)));
     }
 
@@ -123,9 +123,9 @@ public class ItemRequestControllerTest {
         mvc.perform(get("/requests")
                         .header(userIdHeader, 1)
                         .param("from", "0")
-                        .param("size", "2")).andDo(print()).
+                        .param("size", "2")).andDo(print())
                 //then
-                        andExpectAll(status().isOk(),
+                .andExpectAll(status().isOk(),
                         content().json(objectMapper.writeValueAsString(itemRequestListDto)));
     }
 
@@ -220,9 +220,9 @@ public class ItemRequestControllerTest {
         mvc.perform(get("/requests/all")
                         .header(userIdHeader, 1)
                         .param("from", "0")
-                        .param("size", "24343")).andDo(print()).
+                        .param("size", "24343")).andDo(print())
                 //then
-                        andExpectAll(status().isBadRequest());
+                .andExpectAll(status().isBadRequest());
         verify(itemRequestService, times(0)).getUserRequests(any(PageRequest.class), anyLong());
     }
 

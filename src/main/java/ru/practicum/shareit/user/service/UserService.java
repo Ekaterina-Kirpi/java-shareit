@@ -39,8 +39,7 @@ public class UserService {
         if (user.getEmail() != null) {
             userUp.setEmail(user.getEmail());
         }
-        return userMapper.toUserResponseDtoFromUser
-                (userRepository.save(userMapper.toUserFromUserUpdateDto(user, userUp)));
+        return userMapper.toUserResponseDtoFromUser(userRepository.save(userMapper.toUserFromUserUpdateDto(user, userUp)));
     }
 
 

@@ -60,8 +60,7 @@ public class ItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "У пользователя " + userId + " не найдена вещь " + itemId);
         }
-        return itemMapper.toItemDtoResponseFromItem
-                (itemRepository.save(itemMapper.toItemFromItemDtoUpdate(item, itemUp)));
+        return itemMapper.toItemDtoResponseFromItem(itemRepository.save(itemMapper.toItemFromItemDtoUpdate(item, itemUp)));
     }
 
 
@@ -94,11 +93,10 @@ public class ItemService {
                 .map(itemMapper::toItemDtoResponseFromItem).collect(Collectors.toList());
         for (ItemDtoResponse item : personalItems) {
             item.setLastBooking(itemMapper.toBookingShortDtoFromBooking
-                    (bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc
-                            (item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)));
-            item.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository
-                    .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
-                            item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)
+                    (bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
+                            LocalDateTime.now(), Status.APPROVED).orElse(null)));
+            item.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
+                    item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)
             ));
         }
         return ItemListDto.builder().items(personalItems).build();

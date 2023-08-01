@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingDto {
     @NotNull(message = "Укажите дату, поле не может быть пустым")
-    @FutureOrPresent(message ="Дата начала не может быть в прошлом")
+    @FutureOrPresent(message = "Дата начала не может быть в прошлом")
     private LocalDateTime start;
     @Future(message = "Дата завершения не может быть в прошлом")
     @NotNull(message = "Укажите дату, поле не может быть пустым")
     private LocalDateTime end;
-    @NotNull(message =  "Поле не может быть пустым")
+    @NotNull(message = "Поле не может быть пустым")
     @Min(value = 1, message = "Некорректный itemId")
     private Long itemId;
     private Status status;

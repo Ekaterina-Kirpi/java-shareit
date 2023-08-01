@@ -64,8 +64,8 @@ public class UserControllerTest {
         //when
         mvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(userDto))
-                        .contentType(MediaType.APPLICATION_JSON)).
-                andDo(print())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 //then
                 .andExpectAll(
                         status().isCreated(),

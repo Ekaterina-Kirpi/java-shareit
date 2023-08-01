@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestListDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
+import ru.practicum.shareit.request.dto.ItemRequestListDto;
 import ru.practicum.shareit.request.dto.RequestDtoResponse;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -41,9 +41,8 @@ public class ItemRequestService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + requesterId + " отсутствует");
         }
         return ItemRequestListDto.builder()
-                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest
-                        (itemRequestRepository.findAllByRequesterId(pageRequest, requesterId)
-                        )).build();
+                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterId(pageRequest,
+                        requesterId))).build();
     }
 
 
@@ -52,9 +51,8 @@ public class ItemRequestService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + requesterId + " отсутствует");
         }
         return ItemRequestListDto.builder()
-                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest
-                        (itemRequestRepository.findAllByRequesterIdNot(pageRequest, requesterId)
-                        )).build();
+                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterIdNot(pageRequest,
+                        requesterId))).build();
     }
 
 

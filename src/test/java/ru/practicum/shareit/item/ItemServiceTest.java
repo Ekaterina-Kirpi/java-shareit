@@ -338,6 +338,7 @@ public class ItemServiceTest {
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
+
     private void createLastAndNextBookings(ItemDtoResponse item) {
         Item bookingItem = new Item();
         bookingItem.setId(item.getId());
