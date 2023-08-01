@@ -92,8 +92,7 @@ public class ItemService {
         List<ItemDtoResponse> personalItems = itemRepository.findAllByOwnerIdOrderByIdAsc(pageable, userId).stream()
                 .map(itemMapper::toItemDtoResponseFromItem).collect(Collectors.toList());
         for (ItemDtoResponse item : personalItems) {
-            item.setLastBooking(itemMapper.toBookingShortDtoFromBooking
-                    (bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
+            item.setLastBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
                             LocalDateTime.now(), Status.APPROVED).orElse(null)));
             item.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
                     item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)
