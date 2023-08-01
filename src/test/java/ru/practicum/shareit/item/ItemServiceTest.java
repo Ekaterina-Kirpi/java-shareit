@@ -228,7 +228,6 @@ public class ItemServiceTest {
                 .ignoringFields("comments").isEqualTo(findItem);
     }
 
-
     @Test
     public void getPersonalItemsWithNotExistingUserTest() {
         //given
@@ -338,6 +337,28 @@ public class ItemServiceTest {
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
+
+    @Test
+    public void getFoundItems() {
+        //given
+        userRepository.save(user1);
+        var savedItem1 = itemService.createItem(item1Dto, user1.getId());
+        var savedItem2 = itemService.createItem(item2Dto, user1.getId());
+        //when
+        var findItems = itemService.search(PageRequest.of(0, 2), "em2");
+        //then
+        assertThat(findItems.getItems()).singleElement().usingRecursiveComparison()
+                .ignoringFields("comments").isEqualTo(savedItem2);
+        //when
+        findItems = itemService.search(PageRequest.of(0, 2), "test");
+        //then
+        assertThat(findItems.getItems().size()).isEqualTo(2);
+        assertThat(findItems.getItems()).element(0).usingRecursiveComparison()
+                .ignoringFields("comments").isEqualTo(savedItem1);
+        assertThat(findItems.getItems()).element(1).usingRecursiveComparison()
+                .ignoringFields("comments").isEqualTo(savedItem2);
+    }
+
 
     private void createLastAndNextBookings(ItemDtoResponse item) {
         Item bookingItem = new Item();
