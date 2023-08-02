@@ -1,17 +1,18 @@
 package ru.practicum.shareit.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.ConstraintViolationException;
 
 @Slf4j
-@RestControllerAdvice("ru.practicum.shareit")
+@ControllerAdvice("ru.practicum.shareit")
 public class ExceptionsHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
@@ -30,7 +31,7 @@ public class ExceptionsHandler {
                 .body(HttpStatus.BAD_REQUEST + " " + exception.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<String> handleException() {
         log.debug("Получен статус 500 INTERNAL_SERVER_ERROR - нарушение уникального индекса или первичного ключа");
         return ResponseEntity
@@ -54,8 +55,8 @@ public class ExceptionsHandler {
                 .body(HttpStatus.BAD_REQUEST + " " + exception.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    private ResponseEntity<String> handleException(Exception exception) {
+    @ExceptionHandler(Throwable.class)
+    private ResponseEntity<String> handleException(Throwable exception) {
         log.debug("Получен статус 500 INTERNAL_SERVER_ERROR {}", exception.getMessage(), exception);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

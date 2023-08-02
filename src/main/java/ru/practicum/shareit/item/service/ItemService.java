@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.enam.Status;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -60,6 +61,16 @@ public class ItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "У пользователя " + userId + " не найдена вещь " + itemId);
         }
+        if (item.getName() != null && !item.getName().isBlank()) {
+            itemUp.setName(item.getName());
+        }
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            itemUp.setDescription(itemUp.getDescription());
+        }
+        if (item.getAvailable() != null) {
+            itemUp.setAvailable(item.getAvailable());
+        }
+
         return itemMapper.toItemDtoResponseFromItem(itemRepository.save(itemMapper.toItemFromItemDtoUpdate(item, itemUp)));
     }
 
@@ -70,19 +81,19 @@ public class ItemService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, " Вещь " + itemId + " не найдена"));
         ItemDtoResponse itemDtoResponse = itemMapper.toItemDtoResponseFromItem(item);
         if (item.getOwner().getId().equals(userId)) {
-            itemDtoResponse.setLastBooking(itemMapper
-                    .toBookingShortDtoFromBooking(bookingRepository
-                            .findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(
-                                    itemId, LocalDateTime.now(), Status.APPROVED).orElse(null)
-                    ));
-            itemDtoResponse.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository
-                    .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
-                            itemId, LocalDateTime.now(), Status.APPROVED).orElse(null)
-            ));
+            Booking lastBooking = bookingRepository
+                    .findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(itemId, LocalDateTime.now(), Status.APPROVED)
+                    .orElse(null);
+            Booking nextBooking = bookingRepository
+                    .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), Status.APPROVED)
+                    .orElse(null);
+            itemDtoResponse.setLastBooking(itemMapper.toBookingShortDtoFromBooking(lastBooking));
+            itemDtoResponse.setNextBooking(itemMapper.toBookingShortDtoFromBooking(nextBooking));
             return itemDtoResponse;
         }
         return itemDtoResponse;
     }
+
 
     @Transactional(readOnly = true)
     public ItemListDto getAllItemsOwner(Pageable pageable, Long userId) {
@@ -93,7 +104,7 @@ public class ItemService {
                 .map(itemMapper::toItemDtoResponseFromItem).collect(Collectors.toList());
         for (ItemDtoResponse item : personalItems) {
             item.setLastBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
-                            LocalDateTime.now(), Status.APPROVED).orElse(null)));
+                    LocalDateTime.now(), Status.APPROVED).orElse(null)));
             item.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
                     item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)
             ));
