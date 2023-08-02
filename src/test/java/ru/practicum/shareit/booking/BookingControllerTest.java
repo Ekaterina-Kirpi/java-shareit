@@ -17,7 +17,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.dto.BookingListDto;
 import ru.practicum.shareit.booking.enam.Status;
-import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.StateException;
 import ru.practicum.shareit.item.dto.ItemLimitDto;
 import ru.practicum.shareit.user.dto.UserLimitDto;
@@ -38,7 +38,7 @@ public class BookingControllerTest {
     private final ObjectMapper objectMapper;
     private final MockMvc mvc;
     @MockBean
-    private final BookingService bookingService;
+    private final BookingServiceImpl bookingServiceImpl;
     private static BookingDto bookingDto;
     private BookingListDto bookingListDto;
     private static BookingDtoResponse bookingDtoResponse;
@@ -73,7 +73,7 @@ public class BookingControllerTest {
     @SneakyThrows
     public void createBookingTest() {
         //when
-        when(bookingService.createBooking(anyLong(), any(BookingDto.class))).thenReturn(bookingDtoResponse);
+        when(bookingServiceImpl.createBooking(anyLong(), any(BookingDto.class))).thenReturn(bookingDtoResponse);
         mvc.perform(post("/bookings")
                         .content(objectMapper.writeValueAsString(bookingDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,7 +94,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).createBooking(anyLong(), any(BookingDto.class));
+        verify(bookingServiceImpl, times(0)).createBooking(anyLong(), any(BookingDto.class));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).createBooking(anyLong(), any(BookingDto.class));
+        verify(bookingServiceImpl, times(0)).createBooking(anyLong(), any(BookingDto.class));
         bookingDto.setStart(LocalDateTime.now().plusDays(1));
     }
 
@@ -127,7 +127,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).createBooking(anyLong(), any(BookingDto.class));
+        verify(bookingServiceImpl, times(0)).createBooking(anyLong(), any(BookingDto.class));
         bookingDto.setEnd(LocalDateTime.now().plusDays(2));
     }
 
@@ -144,7 +144,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).createBooking(anyLong(), any(BookingDto.class));
+        verify(bookingServiceImpl, times(0)).createBooking(anyLong(), any(BookingDto.class));
         bookingDto.setItemId(1L);
     }
 
@@ -154,7 +154,7 @@ public class BookingControllerTest {
         //given
         bookingDtoResponse.setStatus(Status.APPROVED);
         //when
-        when(bookingService.approveBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(bookingDtoResponse);
+        when(bookingServiceImpl.approveBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(bookingDtoResponse);
         mvc.perform((patch("/bookings/1"))
                         .header(userIdHeader, 1)
                         .param("approved", "true"))
@@ -174,7 +174,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).approveBooking(anyLong(), anyLong(), anyBoolean());
+        verify(bookingServiceImpl, times(0)).approveBooking(anyLong(), anyLong(), anyBoolean());
     }
 
     @Test
@@ -187,14 +187,14 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).approveBooking(anyLong(), anyLong(), anyBoolean());
+        verify(bookingServiceImpl, times(0)).approveBooking(anyLong(), anyLong(), anyBoolean());
     }
 
     @Test
     @SneakyThrows
     public void getBookingByIdForOwnerAndBookerTest() {
         //when
-        when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(bookingDtoResponse);
+        when(bookingServiceImpl.getBookingById(anyLong(), anyLong())).thenReturn(bookingDtoResponse);
         mvc.perform(get("/bookings/1")
                         .header(userIdHeader, 1))
                 .andDo(print())
@@ -211,7 +211,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).getBookingById(anyLong(), anyLong());
+        verify(bookingServiceImpl, times(0)).getBookingById(anyLong(), anyLong());
     }
 
     @Test
@@ -223,7 +223,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).getBookingById(anyLong(), anyLong());
+        verify(bookingServiceImpl, times(0)).getBookingById(anyLong(), anyLong());
     }
 
     @Test
@@ -234,7 +234,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isInternalServerError());
-        verify(bookingService, times(0)).getBookingById(anyLong(), anyLong());
+        verify(bookingServiceImpl, times(0)).getBookingById(anyLong(), anyLong());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class BookingControllerTest {
                 .bookings(List.of(bookingDtoResponse))
                 .build();
         //when
-        when(bookingService.getAllBookings(any(Pageable.class), anyLong(), anyString()))
+        when(bookingServiceImpl.getAllBookings(any(Pageable.class), anyLong(), anyString()))
                 .thenReturn(bookingListDto);
         mvc.perform(get("/bookings")
                         .header(userIdHeader, 1)
@@ -264,7 +264,7 @@ public class BookingControllerTest {
                 .bookings(List.of(bookingDtoResponse))
                 .build();
         //when
-        when(bookingService.getAllBookings(any(Pageable.class), anyLong(), anyString()))
+        when(bookingServiceImpl.getAllBookings(any(Pageable.class), anyLong(), anyString()))
                 .thenThrow(StateException.class);
         mvc.perform(get("/bookings")
                         .header(userIdHeader, 1)
@@ -288,7 +288,7 @@ public class BookingControllerTest {
                 //then
                 .andExpectAll(
                         status().isBadRequest());
-        verify(bookingService, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
+        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
     }
 
     @Test
@@ -302,7 +302,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
+        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
     }
 
     @Test
@@ -316,7 +316,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
+        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
     }
 
     @Test
@@ -327,7 +327,7 @@ public class BookingControllerTest {
                 .bookings(List.of(bookingDtoResponse))
                 .build();
         //when
-        when(bookingService.getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString()))
+        when(bookingServiceImpl.getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString()))
                 .thenReturn(bookingListDto);
         mvc.perform(get("/bookings/owner")
                         .header(userIdHeader, 1)
@@ -349,7 +349,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0))
+        verify(bookingServiceImpl, times(0))
                 .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
     }
 
@@ -364,7 +364,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0))
+        verify(bookingServiceImpl, times(0))
                 .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
     }
 
@@ -379,7 +379,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingService, times(0))
+        verify(bookingServiceImpl, times(0))
                 .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
     }
 }

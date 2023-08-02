@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,13 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.dto.BookingListDto;
-import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.utilits.ShareItPageRequest;
+import ru.practicum.shareit.booking.service.BookingServiceImpl;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -31,7 +26,7 @@ import static ru.practicum.shareit.utilits.Constants.*;
 @RequiredArgsConstructor
 public class BookingController {
 
-    private final BookingService bookingService;
+    private final BookingServiceImpl bookingServiceImpl;
 
 
     @PostMapping
@@ -40,7 +35,7 @@ public class BookingController {
         log.info("Запрос на создание бронирования");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(bookingService.createBooking(bookerId, bookingDto));
+                .body(bookingServiceImpl.createBooking(bookerId, bookingDto));
     }
 
     @PatchMapping("{bookingId}")
@@ -49,7 +44,7 @@ public class BookingController {
                                                              @PathVariable @Positive Long bookingId) {
         log.info("Запрос на подтверждение/отклонение бронирования {} пользователем {}", bookingId, ownerId);
         return ResponseEntity.ok()
-                .body(bookingService.approveBooking(ownerId, bookingId, approved));
+                .body(bookingServiceImpl.approveBooking(ownerId, bookingId, approved));
     }
 
     @GetMapping("{bookingId}")
@@ -58,7 +53,7 @@ public class BookingController {
             @RequestHeader(USER_ID_HEADER) @Positive Long userId) {
         log.info("Запрос на получение бронирования {}  у пользователя {}", bookingId, userId);
         return ResponseEntity.ok()
-                .body(bookingService.getBookingById(bookingId, userId));
+                .body(bookingServiceImpl.getBookingById(bookingId, userId));
     }
 
     @GetMapping
@@ -71,7 +66,7 @@ public class BookingController {
             @Positive Integer size) {
         log.info("Запрос на получение всех бронирований у пользователя {}", userId);
         return ResponseEntity.ok()
-                .body(bookingService.getAllBookings(PageRequest.of(from / size, size), userId, state));
+                .body(bookingServiceImpl.getAllBookings(PageRequest.of(from / size, size), userId, state));
     }
 
     @GetMapping("owner")
@@ -84,6 +79,6 @@ public class BookingController {
             @Positive Integer size) {
         log.info("Запрос на получение всех забронированных вещей у пользователя " + userId);
         return ResponseEntity.ok()
-                .body(bookingService.getAllBookingsOfOwner(PageRequest.of(from / size, size), userId, state));
+                .body(bookingServiceImpl.getAllBookingsOfOwner(PageRequest.of(from / size, size), userId, state));
     }
 }
