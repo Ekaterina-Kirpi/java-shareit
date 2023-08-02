@@ -66,7 +66,7 @@ public class BookingController {
             @Positive Integer size) {
         log.info("Запрос на получение всех бронирований у пользователя {}", userId);
         return ResponseEntity.ok()
-                .body(bookingServiceImpl.getAllBookings(PageRequest.of(from / size, size), userId, state));
+                .body(bookingServiceImpl.getAllBookings(userId, state, from, size));
     }
 
     @GetMapping("owner")
@@ -79,6 +79,6 @@ public class BookingController {
             @Positive Integer size) {
         log.info("Запрос на получение всех забронированных вещей у пользователя " + userId);
         return ResponseEntity.ok()
-                .body(bookingServiceImpl.getAllBookingsOfOwner(PageRequest.of(from / size, size), userId, state));
+                .body(bookingServiceImpl.getAllBookingsOfOwner(userId, state, from, size));
     }
 }

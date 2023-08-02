@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ItemControllerTest {
     private final ObjectMapper objectMapper;
     @MockBean
-    private ItemService itemService;
+    private ItemServiceImpl itemServiceImpl;
     private final MockMvc mvc;
     private ItemDto item1;
     private ItemDtoResponse itemDtoResponse;
@@ -60,7 +60,7 @@ public class ItemControllerTest {
     @Test
     public void createItemTest() throws Exception {
         //when
-        when(itemService.createItem(any(ItemDto.class), anyLong())).thenReturn(itemDtoResponse);
+        when(itemServiceImpl.createItem(any(ItemDto.class), anyLong())).thenReturn(itemDtoResponse);
         mvc.perform(post("/items")
                         .header(userIdHeader, 1)
                         .content(objectMapper.writeValueAsString(item1))
@@ -80,7 +80,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createItem(any(ItemDto.class), anyLong());
+        verify(itemServiceImpl, times(0)).createItem(any(ItemDto.class), anyLong());
     }
 
     @SneakyThrows
@@ -95,7 +95,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createItem(any(ItemDto.class), anyLong());
+        verify(itemServiceImpl, times(0)).createItem(any(ItemDto.class), anyLong());
     }
 
     @SneakyThrows
@@ -110,7 +110,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createItem(any(ItemDto.class), anyLong());
+        verify(itemServiceImpl, times(0)).createItem(any(ItemDto.class), anyLong());
     }
 
     @SneakyThrows
@@ -125,7 +125,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createItem(any(ItemDto.class), anyLong());
+        verify(itemServiceImpl, times(0)).createItem(any(ItemDto.class), anyLong());
     }
 
     @SneakyThrows
@@ -140,7 +140,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createItem(any(ItemDto.class), anyLong());
+        verify(itemServiceImpl, times(0)).createItem(any(ItemDto.class), anyLong());
     }
 
     @SneakyThrows
@@ -150,7 +150,7 @@ public class ItemControllerTest {
         itemDtoResponse.setName(itemDtoUpdate.getName());
         itemDtoResponse.setDescription(itemDtoUpdate.getDescription());
         //when
-        when(itemService.updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class))).thenReturn(itemDtoResponse);
+        when(itemServiceImpl.updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class))).thenReturn(itemDtoResponse);
         mvc.perform(patch("/items/1")
                         .header(userIdHeader, 1)
                         .content(objectMapper.writeValueAsString(item1))
@@ -170,7 +170,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
+        verify(itemServiceImpl, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
     }
 
     @SneakyThrows
@@ -183,7 +183,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
+        verify(itemServiceImpl, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
     }
 
     @SneakyThrows
@@ -198,7 +198,7 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
+        verify(itemServiceImpl, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
     }
 
     @SneakyThrows
@@ -214,14 +214,14 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
+        verify(itemServiceImpl, times(0)).updateItem(anyLong(), anyLong(), any(ItemDtoUpdate.class));
     }
 
     @SneakyThrows
     @Test
     public void getItemByIdTest() {
         //when
-        when(itemService.getItemById(anyLong(), anyLong())).thenReturn(itemDtoResponse);
+        when(itemServiceImpl.getItemById(anyLong(), anyLong())).thenReturn(itemDtoResponse);
         mvc.perform(get("/items/1")
                         .header(userIdHeader, 1))
                 .andDo(print())
@@ -239,7 +239,7 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).getItemById(anyLong(), anyLong());
+        verify(itemServiceImpl, times(0)).getItemById(anyLong(), anyLong());
     }
 
     @SneakyThrows
@@ -251,7 +251,7 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).getItemById(anyLong(), anyLong());
+        verify(itemServiceImpl, times(0)).getItemById(anyLong(), anyLong());
     }
 
     @SneakyThrows
@@ -260,7 +260,7 @@ public class ItemControllerTest {
         //given
         var itemListDto = ItemListDto.builder().items(List.of(itemDtoResponse)).build();
         //when
-        when(itemService.getAllItemsOwner(any(Pageable.class), anyLong())).thenReturn(itemListDto);
+        when(itemServiceImpl.getAllItemsOwner(any(Pageable.class), anyLong())).thenReturn(itemListDto);
         mvc.perform(get("/items")
                         .param("from", "0")
                         .param("size", "1")
@@ -280,7 +280,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 0))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
     }
 
     @SneakyThrows
@@ -293,7 +293,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 1))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
     }
 
     @SneakyThrows
@@ -306,7 +306,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 1))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
     }
 
     @SneakyThrows
@@ -315,7 +315,7 @@ public class ItemControllerTest {
         //given
         var itemListDto = ItemListDto.builder().items(List.of(itemDtoResponse)).build();
         //when
-        when(itemService.search(any(Pageable.class), anyString())).thenReturn(itemListDto);
+        when(itemServiceImpl.search(any(Pageable.class), anyString())).thenReturn(itemListDto);
         mvc.perform(get("/items/search")
                         .param("from", "0")
                         .param("size", "1")
@@ -335,7 +335,7 @@ public class ItemControllerTest {
                         .param("text", "description"))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).search(any(Pageable.class), anyString());
+        verify(itemServiceImpl, times(0)).search(any(Pageable.class), anyString());
     }
 
     @SneakyThrows
@@ -348,7 +348,7 @@ public class ItemControllerTest {
                         .param("text", "description"))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).search(any(Pageable.class), anyString());
+        verify(itemServiceImpl, times(0)).search(any(Pageable.class), anyString());
     }
 
     @SneakyThrows
@@ -365,7 +365,7 @@ public class ItemControllerTest {
                 .created(LocalDateTime.now())
                 .build();
         //when
-        when(itemService.createComment(anyLong(), anyLong(), any(CommentDto.class))).thenReturn(commentDtoResponse);
+        when(itemServiceImpl.createComment(anyLong(), anyLong(), any(CommentDto.class))).thenReturn(commentDtoResponse);
         mvc.perform(post("/items/1/comment")
                         .header(userIdHeader, 1)
                         .content(objectMapper.writeValueAsString(comment))
@@ -390,7 +390,7 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
+        verify(itemServiceImpl, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
     }
 
     @SneakyThrows
@@ -408,7 +408,7 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
+        verify(itemServiceImpl, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
     }
 
     @SneakyThrows
@@ -426,6 +426,6 @@ public class ItemControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemService, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
+        verify(itemServiceImpl, times(0)).createComment(anyLong(), anyLong(), any(CommentDto.class));
     }
 }

@@ -18,7 +18,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoResponse;
 import ru.practicum.shareit.user.dto.UserDtoUpdate;
 import ru.practicum.shareit.user.dto.UserListDto;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     private final ObjectMapper objectMapper;
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     private final MockMvc mvc;
 
     private static UserDtoResponse userDtoResponse;
@@ -60,7 +60,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserTest() throws Exception {
-        when(userService.createUser(any(UserDto.class))).thenReturn(userDtoResponse);
+        when(userServiceImpl.createUser(any(UserDto.class))).thenReturn(userDtoResponse);
         //when
         mvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(userDto))
@@ -75,7 +75,7 @@ public class UserControllerTest {
 
     @Test
     public void createUserDuplicateTest() throws Exception {
-        when(userService.createUser(any(UserDto.class))).thenThrow(DataIntegrityViolationException.class);
+        when(userServiceImpl.createUser(any(UserDto.class))).thenThrow(DataIntegrityViolationException.class);
         //when
         mvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(userDto))
@@ -100,7 +100,7 @@ public class UserControllerTest {
                 .andExpectAll(
                         status().isBadRequest()
                 );
-        verify(userService, times(0)).createUser(any(UserDto.class));
+        verify(userServiceImpl, times(0)).createUser(any(UserDto.class));
     }
 
     @Test
@@ -117,12 +117,12 @@ public class UserControllerTest {
                 .andExpectAll(
                         status().isBadRequest()
                 );
-        verify(userService, times(0)).createUser(any(UserDto.class));
+        verify(userServiceImpl, times(0)).createUser(any(UserDto.class));
     }
 
     @Test
     public void getUserByIdTest() throws Exception {
-        when(userService.getUserById(anyLong())).thenReturn(userDtoResponse);
+        when(userServiceImpl.getUserById(anyLong())).thenReturn(userDtoResponse);
         //when
         mvc.perform(get("/users/1"))
                 .andDo(print())
@@ -135,7 +135,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserByNotExistingIdTest() throws Exception {
-        when(userService.getUserById(anyLong())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(userServiceImpl.getUserById(anyLong())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
         //when
         mvc.perform(get("/users/1"))
                 .andDo(print())
@@ -147,7 +147,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserByIncorrectIdTest() throws Exception {
-        when(userService.getUserById(anyLong())).thenReturn(userDtoResponse);
+        when(userServiceImpl.getUserById(anyLong())).thenReturn(userDtoResponse);
         //when
         mvc.perform(get("/users/-1"))
                 .andDo(print())
@@ -160,7 +160,7 @@ public class UserControllerTest {
     @Test
     public void getUsers() throws Exception {
         UserListDto userList = UserListDto.builder().users(List.of(userDtoResponse)).build();
-        when(userService.getAllUsers()).thenReturn(userList);
+        when(userServiceImpl.getAllUsers()).thenReturn(userList);
         //then
         mvc.perform(get("/users"))
                 .andDo(print())
@@ -173,7 +173,7 @@ public class UserControllerTest {
 
     @Test
     public void updateUserTest() throws Exception {
-        when(userService.updateUser(any(UserDtoUpdate.class), anyLong())).thenReturn(userDtoResponse);
+        when(userServiceImpl.updateUser(any(UserDtoUpdate.class), anyLong())).thenReturn(userDtoResponse);
         //then
         mvc.perform(patch("/users/1")
                         .content(objectMapper.writeValueAsString(userDtoUpdate))
@@ -194,7 +194,7 @@ public class UserControllerTest {
                 .andExpectAll(
                         status().isNoContent()
                 );
-        verify(userService, times(1)).deleteUser(1L);
+        verify(userServiceImpl, times(1)).deleteUser(1L);
     }
 
 }

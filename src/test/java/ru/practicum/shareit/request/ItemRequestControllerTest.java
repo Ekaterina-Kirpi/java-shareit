@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.request.dto.*;
-import ru.practicum.shareit.request.service.ItemRequestService;
+import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class ItemRequestControllerTest {
     private final ObjectMapper objectMapper;
     private final MockMvc mvc;
     @MockBean
-    private final ItemRequestService itemRequestService;
+    private final ItemRequestServiceImpl itemRequestServiceImpl;
     private ItemRequestDto itemRequestDto;
     private ItemRequestDtoResponse itemRequestDtoResponse;
     private ItemRequestListDto itemRequestListDto;
@@ -70,7 +70,7 @@ public class ItemRequestControllerTest {
     @SneakyThrows
     public void createRequestTest() {
         //when
-        when(itemRequestService.createItemRequest(any(ItemRequestDto.class), anyLong()))
+        when(itemRequestServiceImpl.createItemRequest(any(ItemRequestDto.class), anyLong()))
                 .thenReturn(itemRequestDtoResponse);
 
         mvc.perform(post("/requests")
@@ -92,7 +92,7 @@ public class ItemRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).createItemRequest(any(ItemRequestDto.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).createItemRequest(any(ItemRequestDto.class), anyLong());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ItemRequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).createItemRequest(any(ItemRequestDto.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).createItemRequest(any(ItemRequestDto.class), anyLong());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ItemRequestControllerTest {
                 .requests(List.of(requestDtoResponse))
                 .build();
         //when
-        when(itemRequestService.getOwnerRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
+        when(itemRequestServiceImpl.getOwnerRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
         mvc.perform(get("/requests")
                         .header(userIdHeader, 1)
                         .param("from", "0")
@@ -139,7 +139,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class ItemRequestControllerTest {
                         .param("size", "-1")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -177,7 +177,7 @@ public class ItemRequestControllerTest {
                 .requests(List.of(requestDtoResponse))
                 .build();
         //when
-        when(itemRequestService.getUserRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
+        when(itemRequestServiceImpl.getUserRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
         mvc.perform(get("/requests/all")
                         .header(userIdHeader, 1)
                         .param("from", "0")
@@ -197,7 +197,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getUserRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getUserRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -223,7 +223,7 @@ public class ItemRequestControllerTest {
                         .param("size", "24343")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getUserRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
     }
 
     @Test
@@ -232,7 +232,7 @@ public class ItemRequestControllerTest {
         //given
         requestDtoResponse.setItems(Collections.singletonList(itemForRequestDto));
         //when
-        when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(requestDtoResponse);
+        when(itemRequestServiceImpl.getItemRequestById(anyLong(), anyLong())).thenReturn(requestDtoResponse);
         mvc.perform(get("/requests/1")
                         .header(userIdHeader, 1)).andDo(print())
                 //then
@@ -248,7 +248,7 @@ public class ItemRequestControllerTest {
                         .header(userIdHeader, 0)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getItemRequestById(anyLong(), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getItemRequestById(anyLong(), anyLong());
     }
 
     @Test
@@ -259,6 +259,6 @@ public class ItemRequestControllerTest {
                         .header(userIdHeader, 1)).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestService, times(0)).getItemRequestById(anyLong(), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getItemRequestById(anyLong(), anyLong());
     }
 }

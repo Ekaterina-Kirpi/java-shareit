@@ -12,7 +12,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.dto.ItemRequestListDto;
 import ru.practicum.shareit.request.dto.RequestDtoResponse;
-import ru.practicum.shareit.request.service.ItemRequestService;
+import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -26,14 +26,14 @@ import static ru.practicum.shareit.utilits.Constants.USER_ID_HEADER;
 @Validated
 @RequiredArgsConstructor
 public class ItemRequestController {
-    private final ItemRequestService itemRequestService;
+    private final ItemRequestServiceImpl itemRequestServiceImpl;
 
     @PostMapping
     public ResponseEntity<ItemRequestDtoResponse> createRequest(@RequestHeader(USER_ID_HEADER) @Min(1) Long requesterId,
                                                                 @RequestBody @Valid ItemRequestDto itemRequestDto) {
         log.info("Запрос на добавление запроса");
         return ResponseEntity.ok()
-                .body(itemRequestService.createItemRequest(itemRequestDto, requesterId));
+                .body(itemRequestServiceImpl.createItemRequest(itemRequestDto, requesterId));
     }
 
     @GetMapping
@@ -43,7 +43,7 @@ public class ItemRequestController {
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(20) Integer size) {
         log.info("Запрос на получение запросов владельца");
         return ResponseEntity.ok()
-                .body(itemRequestService
+                .body(itemRequestServiceImpl
                         .getOwnerRequests(PageRequest.of(from / size, size)
                                 .withSort(Sort.by("created").descending()), requesterId));
     }
@@ -55,7 +55,7 @@ public class ItemRequestController {
             @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(20) Integer size) {
         log.info("Запрос на получение запросов пользователя");
         return ResponseEntity.ok()
-                .body(itemRequestService
+                .body(itemRequestServiceImpl
                         .getUserRequests(PageRequest.of(
                                         from / size, size, Sort.by(Sort.Direction.DESC, "created")),
                                 requesterId));
@@ -67,6 +67,6 @@ public class ItemRequestController {
             @PathVariable @Min(1) Long requestId) {
         log.info("Запрос на получение запроса {}  у пользователя {} ", requestId, userId);
         return ResponseEntity.ok()
-                .body(itemRequestService.getItemRequestById(userId, requestId));
+                .body(itemRequestServiceImpl.getItemRequestById(userId, requestId));
     }
 }

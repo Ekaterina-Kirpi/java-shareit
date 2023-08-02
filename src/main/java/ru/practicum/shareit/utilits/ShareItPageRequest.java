@@ -10,21 +10,20 @@ public class ShareItPageRequest extends PageRequest {
     //public ShareItPageRequest(Integer from, Integer size, Sort sort) {
     //   super(from / size, size, sort);
 
-
-    protected ShareItPageRequest(int page, int size, Sort sort) {
-        super(page, size, sort);
+    public ShareItPageRequest() {
+        this(Sort.unsorted());
     }
 
-    public static Pageable toMakePage(Integer from, Integer size) {
-        if (from == null || size == null) {
-            return null;
-        }
+    public ShareItPageRequest(Sort sort) {
+        this(0, 20, sort);
+    }
 
-        if (size <= 0 || from < 0) {
-            throw new StateException("Уточнчите правильность параметров отображения");
-        }
+    public ShareItPageRequest(int from, int size) {
+        this(from, size, Sort.unsorted());
+    }
 
-        int page = from / size;
-        return PageRequest.of(page, size);
+    public ShareItPageRequest(int from, int size, Sort sort) {
+        super(from / size, size, sort);
     }
 }
+

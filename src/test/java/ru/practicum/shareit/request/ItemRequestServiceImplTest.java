@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.service.ItemRequestService;
+import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -22,8 +22,8 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 @Sql(scripts = {"file:src/main/resources/schema.sql"})
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ItemRequestServiceTest {
-    private final ItemRequestService itemRequestService;
+public class ItemRequestServiceImplTest {
+    private final ItemRequestServiceImpl itemRequestServiceImpl;
     private final UserRepository userRepository;
     private User user1;
     private User user2;
@@ -47,8 +47,8 @@ public class ItemRequestServiceTest {
         //given
         userRepository.save(user1);
         //when
-        var savedRequest = itemRequestService.createItemRequest(itemRequestDto, user1.getId());
-        var findRequest = itemRequestService.getItemRequestById(user1.getId(), savedRequest.getId());
+        var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
+        var findRequest = itemRequestServiceImpl.getItemRequestById(user1.getId(), savedRequest.getId());
         //then
         assertThat(savedRequest).usingRecursiveComparison().ignoringFields("items", "created")
                 .isEqualTo(findRequest);
@@ -60,7 +60,7 @@ public class ItemRequestServiceTest {
         userRepository.save(user1);
         assertThatThrownBy(
                 //when
-                () -> itemRequestService.createItemRequest(itemRequestDto, 99L)
+                () -> itemRequestServiceImpl.createItemRequest(itemRequestDto, 99L)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -70,11 +70,11 @@ public class ItemRequestServiceTest {
         //given
         userRepository.save(user1);
         userRepository.save(user2);
-        var savedRequest = itemRequestService.createItemRequest(itemRequestDto, user2.getId());
+        var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user2.getId());
         //when
-        var privateRequests = itemRequestService
+        var privateRequests = itemRequestServiceImpl
                 .getOwnerRequests(PageRequest.of(0, 2), user2.getId());
-        var findRequest = itemRequestService.getItemRequestById(user2.getId(), savedRequest.getId());
+        var findRequest = itemRequestServiceImpl.getItemRequestById(user2.getId(), savedRequest.getId());
         //then
         assertThat(privateRequests.getRequests().get(0)).usingRecursiveComparison().isEqualTo(findRequest);
     }
@@ -85,7 +85,7 @@ public class ItemRequestServiceTest {
         userRepository.save(user1);
         assertThatThrownBy(
                 //when
-                () -> itemRequestService
+                () -> itemRequestServiceImpl
                         .getOwnerRequests(PageRequest.of(0, 2), 55L)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
@@ -96,10 +96,10 @@ public class ItemRequestServiceTest {
         //given
         userRepository.save(user1);
         userRepository.save(user2);
-        var savedRequest = itemRequestService.createItemRequest(itemRequestDto, user1.getId());
-        var findRequest = itemRequestService.getItemRequestById(user1.getId(), savedRequest.getId());
+        var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
+        var findRequest = itemRequestServiceImpl.getItemRequestById(user1.getId(), savedRequest.getId());
         //when
-        var otherRequest = itemRequestService.getUserRequests(PageRequest.of(0, 2), user2.getId());
+        var otherRequest = itemRequestServiceImpl.getUserRequests(PageRequest.of(0, 2), user2.getId());
         //then
         assertThat(otherRequest.getRequests().get(0)).usingRecursiveComparison().isEqualTo(findRequest);
     }
@@ -108,10 +108,10 @@ public class ItemRequestServiceTest {
     public void getOtherRequestsWhenRequesterNotFoundTest() {
         //given
         userRepository.save(user1);
-        itemRequestService.createItemRequest(itemRequestDto, user1.getId());
+        itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
         assertThatThrownBy(
                 //when
-                () -> itemRequestService.getUserRequests(PageRequest.of(0, 2), 50L)
+                () -> itemRequestServiceImpl.getUserRequests(PageRequest.of(0, 2), 50L)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -120,10 +120,10 @@ public class ItemRequestServiceTest {
     public void getItemRequestWhenUserNotFoundTest() {
         //given
         userRepository.save(user1);
-        var savedRequest = itemRequestService.createItemRequest(itemRequestDto, user1.getId());
+        var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
         assertThatThrownBy(
                 //when
-                () -> itemRequestService.getItemRequestById(50L, savedRequest.getId())
+                () -> itemRequestServiceImpl.getItemRequestById(50L, savedRequest.getId())
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -132,10 +132,10 @@ public class ItemRequestServiceTest {
     public void getItemRequestWhenRequestNotFoundTest() {
         //given
         userRepository.save(user1);
-        var savedRequest = itemRequestService.createItemRequest(itemRequestDto, user1.getId());
+        var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
         assertThatThrownBy(
                 //when
-                () -> itemRequestService.getItemRequestById(savedRequest.getId(), 50L)
+                () -> itemRequestServiceImpl.getItemRequestById(savedRequest.getId(), 50L)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }

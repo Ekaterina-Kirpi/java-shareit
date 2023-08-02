@@ -19,10 +19,13 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.utilits.Sort.SORT_BY_START_DESC;
 
 @RequiredArgsConstructor
 @Service
@@ -103,7 +106,8 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Transactional(readOnly = true)
-    public BookingListDto getAllBookings(Pageable pageable, Long userId, String state) {
+    public BookingListDto getAllBookings(Long userId, String state, int from, int size) {
+        Pageable pageable = new ShareItPageRequest(from, size, SORT_BY_START_DESC);
         if (!userRepository.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "Пользователь " + userId + " не найден");
@@ -114,7 +118,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public BookingListDto getAllBookingsOfOwner(Pageable pageable, Long userId, String state) {
+    public BookingListDto getAllBookingsOfOwner(Long userId, String state, int from, int size) {
+        Pageable pageable = new ShareItPageRequest(from, size, SORT_BY_START_DESC);
         if (!userRepository.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
@@ -124,7 +129,6 @@ public class BookingServiceImpl implements BookingService {
         } else {
             return getListBookings(pageable, state, userId, true);
         }
-
     }
 
     private BookingListDto getListBookings(Pageable pageable, String state, Long userId, Boolean isOwner) {
@@ -221,54 +225,4 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 }
-
- /* private BookingListDto getListBookings(Pageable pageable, String state, Long userId, Boolean isOwner) {
-      List<Long> itemsId;
-      List<Booking> bookings;
-
-      switch (State.checkState(state.toUpperCase())) {
-          case ALL:
-              if (isOwner) {
-                  itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                  bookings = bookingRepository.findAllByItemIdInOrderByStartDesc(pageable, itemsId);
-              } else {
-                  bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(pageable, userId);
-              }
-              break;
-          case CURRENT:
-              if (isOwner) {
-                  itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                  bookings = bookingRepository.findAllByItemIdInAndStartIsBeforeAndEndIsAfterOrderByStartDesc(pageable, itemsId, LocalDateTime.now(), LocalDateTime.now());
-              } else {
-                  bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(pageable, userId, LocalDateTime.now(), LocalDateTime.now());
-              }
-              break;
-          case PAST:
-              if (isOwner) {
-                  itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                  bookings = bookingRepository.findAllByItemIdInAndEndIsBeforeOrderByStartDesc(pageable, itemsId, LocalDateTime.now());
-              } else {
-                  bookings = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(pageable, userId, LocalDateTime.now());
-              }
-              break;
-          case FUTURE:
-              if (isOwner) {
-                  itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                  bookings = bookingRepository.findAllByItemIdInAndStartIsAfterOrderByStartDesc(pageable, itemsId, LocalDateTime.now());
-              } else {
-                  bookings = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, LocalDateTime.now());
-              }
-              break;
-          default:
-              throw new StateException("Unknown state: " + state);
-      }
-
-      return BookingListDto.builder()
-              .bookings(bookings.stream()
-                      .map(bookingMapper::toBookingDtoResponseFromBooking)
-                      .collect(Collectors.toList()))
-              .build();
-  }
-
-  */
 
