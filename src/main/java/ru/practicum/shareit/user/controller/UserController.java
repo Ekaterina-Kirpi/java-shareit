@@ -22,7 +22,7 @@ import javax.validation.constraints.Min;
 @Slf4j
 @RequestMapping("/users")
 @Validated
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
@@ -37,31 +37,28 @@ public class UserController {
     @PatchMapping("{id}")
     public ResponseEntity<UserDtoResponse> updateUser(@RequestBody UserDtoUpdate userDtoUpdate, @PathVariable("id") Long userId) {
         log.info("Запрос на обновление пользователя");
-        return ResponseEntity
-                .status(HttpStatus.OK)
+        return ResponseEntity.ok()
                 .body(userService.updateUser(userDtoUpdate, userId));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUser(@Min(1) @PathVariable("id") Long userId) {
-        log.info("Запрос на удаление пользователя " + userId);
+        log.info("Запрос на удаление пользователя {}",userId);
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("id") @Min(1) Long userId) {
-        log.info("Запрос на получение пользователя " + userId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
+        log.info("Запрос на получение пользователя {}",userId);
+        return ResponseEntity.ok()
                 .body(userService.getUserById(userId));
     }
 
     @GetMapping
     public ResponseEntity<UserListDto> getUsers() {
         log.info("Запрос на получение списка пользователей");
-        return ResponseEntity
-                .status(HttpStatus.OK)
+        return ResponseEntity.ok()
                 .body(userService.getAllUsers());
     }
 
