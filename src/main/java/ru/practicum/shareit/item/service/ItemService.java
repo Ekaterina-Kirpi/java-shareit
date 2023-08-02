@@ -23,8 +23,12 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -79,6 +83,7 @@ public class ItemService {
     public ItemDtoResponse getItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, " Вещь " + itemId + " не найдена"));
+
         ItemDtoResponse itemDtoResponse = itemMapper.toItemDtoResponseFromItem(item);
         if (item.getOwner().getId().equals(userId)) {
             Booking lastBooking = bookingRepository
@@ -101,7 +106,7 @@ public class ItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
         List<ItemDtoResponse> personalItems = itemRepository.findAllByOwnerIdOrderByIdAsc(pageable, userId).stream()
-                .map(itemMapper::toItemDtoResponseFromItem).collect(Collectors.toList());
+                .map(itemMapper::toItemDtoResponseFromItem).collect(toList());
         for (ItemDtoResponse item : personalItems) {
             item.setLastBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
                     LocalDateTime.now(), Status.APPROVED).orElse(null)));
@@ -122,8 +127,7 @@ public class ItemService {
                         .findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(pageable, text, text)
                         .stream()
                         .map(itemMapper::toItemDtoResponseFromItem)
-                        .collect(Collectors
-                                .toList()))
+                        .collect(toList()))
                 .build();
     }
 
@@ -145,4 +149,10 @@ public class ItemService {
             return itemMapper.toCommentDtoResponseFromComment(commentRepository.save(comment));
         }
     }
+
+    @Transactional(readOnly = true)
+    private Map<Item, List<Comment>> getComments(Collection<Item> items) {
+        return commentRepository.findByItemIn(items).stream().collect(Collectors.groupingBy(Comment::getItem));
+    }
+
 }

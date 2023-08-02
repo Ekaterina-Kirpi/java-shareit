@@ -16,7 +16,6 @@ public interface UserMapper {
 
     User toUserFromUserDto(UserDto userDto);
 
-    // @MappingTarget копирование изменений в целевой объект, значения будут скопированы в User
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User toUserFromUserUpdateDto(UserDtoUpdate userDtoUpdate, @MappingTarget User user);
 }
