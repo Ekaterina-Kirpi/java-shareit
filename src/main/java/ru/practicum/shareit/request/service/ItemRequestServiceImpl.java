@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +16,11 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
+
+import static ru.practicum.shareit.utilits.Sort.SORT_BY_CREATED_DESC;
 
 @Transactional
 @Service
@@ -37,22 +41,24 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestListDto getOwnerRequests(PageRequest pageRequest, Long requesterId) {
+    public ItemRequestListDto getOwnerRequests(Long requesterId, int from, int size) {
+        Pageable pageable = new ShareItPageRequest(from, size, SORT_BY_CREATED_DESC);
         if (!users.existsById(requesterId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + requesterId + " отсутствует");
         }
         return ItemRequestListDto.builder()
-                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterId(pageRequest,
+                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterId(pageable,
                         requesterId))).build();
     }
 
     @Override
-    public ItemRequestListDto getUserRequests(PageRequest pageRequest, Long requesterId) {
+    public ItemRequestListDto getUserRequests(Long requesterId, int from, int size) {
+        Pageable pageable = new ShareItPageRequest(from, size, SORT_BY_CREATED_DESC);
         if (!users.existsById(requesterId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + requesterId + " отсутствует");
         }
         return ItemRequestListDto.builder()
-                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterIdNot(pageRequest,
+                .requests(itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequestRepository.findAllByRequesterIdNot(pageable,
                         requesterId))).build();
     }
 

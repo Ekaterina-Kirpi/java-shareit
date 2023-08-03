@@ -9,9 +9,9 @@ import ru.practicum.shareit.request.dto.RequestDtoResponse;
 public interface ItemRequestService {
     ItemRequestDtoResponse createItemRequest(ItemRequestDto itemRequestDto, Long requesterId);
 
-    ItemRequestListDto getOwnerRequests(PageRequest pageRequest, Long requesterId);
+    ItemRequestListDto getOwnerRequests(Long requesterId, int from, int size);
 
-    ItemRequestListDto getUserRequests(PageRequest pageRequest, Long requesterId);
+    ItemRequestListDto getUserRequests(Long requesterId, int from, int size);
 
     RequestDtoResponse getItemRequestById(Long userId, Long requestId);
 }
