@@ -10,6 +10,8 @@ import java.util.List;
 public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
     List<Item> findAllByOwnerIdOrderByIdAsc(Pageable pageable, Long ownerId);
 
+    List<Item> findAllByRequestId(Long requestId);
+
 
     Boolean existsItemByOwnerId(Long ownerId);
 

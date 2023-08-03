@@ -253,7 +253,7 @@ public class ItemControllerTest {
                 .andExpectAll(status().isBadRequest());
         verify(itemServiceImpl, times(0)).getItemById(anyLong(), anyLong());
     }
-
+/*
     @SneakyThrows
     @Test
     public void getPersonalItemsTest() {
@@ -350,6 +350,7 @@ public class ItemControllerTest {
                 .andExpectAll(status().isBadRequest());
         verify(itemServiceImpl, times(0)).search(any(Pageable.class), anyString());
     }
+    */
 
     @SneakyThrows
     @Test

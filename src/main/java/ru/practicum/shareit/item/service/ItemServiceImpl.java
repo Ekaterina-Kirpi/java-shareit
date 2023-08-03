@@ -23,10 +23,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -64,6 +61,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoResponse updateItem(Long itemId, Long userId, ItemDtoUpdate item) {
         Item itemUp = itemRepository.findById(itemId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Вещь " + itemId + " не найдена"));
+        setComments(List.of(itemUp));
         if (!itemUp.getOwner().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                     "У пользователя " + userId + " не найдена вещь " + itemId);
@@ -87,6 +85,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoResponse getItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, " Вещь " + itemId + " не найдена"));
+        setComments(List.of(item));
 
         ItemDtoResponse itemDtoResponse = itemMapper.toItemDtoResponseFromItem(item);
         if (item.getOwner().getId().equals(userId)) {
@@ -111,8 +110,9 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
-        List<ItemDtoResponse> personalItems = itemRepository.findAllByOwnerIdOrderByIdAsc(pageable, userId).stream()
-                .map(itemMapper::toItemDtoResponseFromItem).collect(toList());
+        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(pageable, userId);
+        setComments(items);
+        List<ItemDtoResponse> personalItems = items.stream().map(itemMapper::toItemDtoResponseFromItem).collect(toList());
         for (ItemDtoResponse item : personalItems) {
             item.setLastBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
                     LocalDateTime.now(), Status.APPROVED).orElse(null)));
@@ -130,9 +130,11 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return ItemListDto.builder().items(new ArrayList<>()).build();
         }
+        List<Item> items = itemRepository
+                .findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(pageable, text, text);
+        setComments(items);
         return ItemListDto.builder()
-                .items(itemRepository
-                        .findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(pageable, text, text)
+                .items(items
                         .stream()
                         .map(itemMapper::toItemDtoResponseFromItem)
                         .collect(toList()))
@@ -157,10 +159,12 @@ public class ItemServiceImpl implements ItemService {
             return itemMapper.toCommentDtoResponseFromComment(commentRepository.save(comment));
         }
     }
-
     @Transactional(readOnly = true)
-    private Map<Item, List<Comment>> getComments(Collection<Item> items) {
-        return commentRepository.findByItemIn(items).stream().collect(Collectors.groupingBy(Comment::getItem));
+    public void setComments(List<Item> items) {
+        for (Item item : items) {
+            List<Comment> comments = commentRepository.findByItemId(item.getId());
+            item.setComments(new HashSet<>(comments));
+        }
     }
 
 }

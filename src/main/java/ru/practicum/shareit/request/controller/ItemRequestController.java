@@ -48,7 +48,7 @@ public class ItemRequestController {
                 .body(itemRequestServiceImpl
                         .getOwnerRequests(requesterId, from, size));
     }
-    
+
 
     @GetMapping("all")
     public ResponseEntity<ItemRequestListDto> getUserRequests(

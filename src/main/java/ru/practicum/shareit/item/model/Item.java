@@ -29,6 +29,6 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "request_id")
     private ItemRequest request;
-    @OneToMany(mappedBy = "item")
+    @Transient
     private Set<Comment> comments;
 }

@@ -29,6 +29,6 @@ public class ItemRequest {
     private User requester;
     @Column
     private LocalDateTime created;
-    @OneToMany(mappedBy = "request", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Transient
     private Set<Item> items;
 }
