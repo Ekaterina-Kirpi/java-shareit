@@ -40,13 +40,12 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException{
+    public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException {
         Item itemNew = itemMapper.toItemFromItemDto(item);
         if (item.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId()).orElseThrow(() ->
                     new ResponseStatusException(HttpStatus.NOT_FOUND,
                             "Запрос " + item.getRequestId() + " не найден"));
-
             itemNew.setRequest(itemRequest);
         }
         itemNew.setOwner(userRepository.findById(userId).orElseThrow(
@@ -84,7 +83,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, " Вещь " + itemId + " не найдена"));
         setComments(List.of(item));
-
         ItemDtoResponse itemDtoResponse = itemMapper.toItemDtoResponseFromItem(item);
         if (item.getOwner().getId().equals(userId)) {
             Booking lastBooking = bookingRepository
