@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.server.ResponseStatusException;
@@ -210,7 +209,7 @@ public class ItemServiceImplTest {
         assertThat(findItem.getNextBooking().getId()).isEqualTo(nextBooking.getId());
     }
 
-   /* @Test
+    @Test
     public void getPersonalItemsTest() {
         //given
         userRepository.save(user1);
@@ -222,7 +221,7 @@ public class ItemServiceImplTest {
         bookingRepository.save(nextBooking);
         var findItem = itemServiceImpl.getItemById(savedItem1.getId(), user1.getId());
         //when
-        var personalItemsList = itemServiceImpl.getAllItemsOwner(PageRequest.of(0, 2), user1.getId());
+        var personalItemsList = itemServiceImpl.getAllItemsOwner(user1.getId(), 0, 2);
         //then
         assertThat(personalItemsList.getItems()).singleElement().usingRecursiveComparison()
                 .ignoringFields("comments").isEqualTo(findItem);
@@ -240,7 +239,7 @@ public class ItemServiceImplTest {
         bookingRepository.save(nextBooking);
         assertThatThrownBy(
                 //when
-                () -> itemServiceImpl.getAllItemsOwner(PageRequest.of(0, 2), 99L)
+                () -> itemServiceImpl.getAllItemsOwner(99L, 0, 2)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -252,13 +251,12 @@ public class ItemServiceImplTest {
         itemServiceImpl.createItem(item1Dto, user1.getId());
         itemServiceImpl.createItem(item2Dto, user1.getId());
         //when
-        var findItems = itemServiceImpl.search(PageRequest.of(0, 2), " ");
+        var findItems = itemServiceImpl.search(" ", 0, 2);
         //then
         assertThat(findItems.getItems()).isEmpty();
     }
 
 
-    */
     @Test
     public void addCommentTest() {
         //given
@@ -340,19 +338,19 @@ public class ItemServiceImplTest {
         ).isInstanceOf(ResponseStatusException.class);
     }
 
-   /* @Test
+    @Test
     public void getFoundItems() {
         //given
         userRepository.save(user1);
         var savedItem1 = itemServiceImpl.createItem(item1Dto, user1.getId());
         var savedItem2 = itemServiceImpl.createItem(item2Dto, user1.getId());
         //when
-        var findItems = itemServiceImpl.search(PageRequest.of(0, 2), "em2");
+        var findItems = itemServiceImpl.search("em2", 0, 2);
         //then
         assertThat(findItems.getItems()).singleElement().usingRecursiveComparison()
                 .ignoringFields("comments").isEqualTo(savedItem2);
         //when
-        findItems = itemServiceImpl.search(PageRequest.of(0, 2), "test");
+        findItems = itemServiceImpl.search("test", 0, 2);
         //then
         assertThat(findItems.getItems().size()).isEqualTo(2);
         assertThat(findItems.getItems()).element(0).usingRecursiveComparison()
@@ -360,8 +358,6 @@ public class ItemServiceImplTest {
         assertThat(findItems.getItems()).element(1).usingRecursiveComparison()
                 .ignoringFields("comments").isEqualTo(savedItem2);
     }
-
-    */
 
 
     private void createLastAndNextBookings(ItemDtoResponse item) {
@@ -385,5 +381,7 @@ public class ItemServiceImplTest {
         nextBooking.setStatus(Status.APPROVED);
     }
 }
+
+
 
 

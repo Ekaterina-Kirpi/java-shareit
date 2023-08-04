@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.server.ResponseStatusException;
@@ -85,7 +84,7 @@ public class BookingServiceImplTest extends Bookings {
         assertThat(savedBooking).usingRecursiveComparison().ignoringFields("start", "end")
                 .isEqualTo(findBooking);
     }
-/*
+
     @Test
     public void createBookingWhenEndBeforeStartTest() {
         //given
@@ -265,7 +264,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "ALL");
+                .getAllBookings(user2.getId(), "ALL", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(10);
         List<Long> listId
@@ -294,7 +293,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "ALL");
+                .getAllBookingsOfOwner(user1.getId(), "ALL", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(5);
         List<Long> listId
@@ -318,7 +317,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "CURRENT");
+                .getAllBookings(user2.getId(), "CURRENT", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(2);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -337,7 +336,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "CURRENT");
+                .getAllBookingsOfOwner(user1.getId(), "CURRENT", 0, 10);
         //then
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
         assertThat(listId).singleElement().isEqualTo(currentBookingForItem1.getId());
@@ -354,7 +353,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "PAST");
+                .getAllBookings(user2.getId(), "PAST", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(2);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -373,7 +372,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "PAST");
+                .getAllBookingsOfOwner(user1.getId(), "PAST", 0, 10);
         //then
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
         assertThat(listId).singleElement().isEqualTo(pastBookingForItem1.getId());
@@ -390,7 +389,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "Future");
+                .getAllBookings(user2.getId(), "Future", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(6);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -413,7 +412,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "Future");
+                .getAllBookingsOfOwner(user1.getId(), "Future", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(3);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -433,7 +432,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "waiting");
+                .getAllBookings(user2.getId(), "waiting", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(2);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -452,7 +451,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "waiting");
+                .getAllBookingsOfOwner(user1.getId(), "waiting", 0, 10);
         //then
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
         assertThat(listId).singleElement().isEqualTo(waitingBookingForItem1.getId());
@@ -469,7 +468,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookings(PageRequest.of(0, 10), user2.getId(), "rejected");
+                .getAllBookings(user2.getId(), "rejected", 0, 10);
         //then
         assertThat(findBookingList.getBookings().size()).isEqualTo(2);
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
@@ -488,7 +487,7 @@ public class BookingServiceImplTest extends Bookings {
         createBookingsInDb();
         //when
         var findBookingList = bookingServiceImpl
-                .getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "rejected");
+                .getAllBookingsOfOwner(user1.getId(), "rejected", 0, 10);
         //then
         List<Long> listId = findBookingList.getBookings().stream().map(BookingDtoResponse::getId).collect(Collectors.toList());
         assertThat(listId).singleElement().isEqualTo(rejectedBookingForItem1.getId());
@@ -498,7 +497,7 @@ public class BookingServiceImplTest extends Bookings {
     public void getBookingListWithUnknownStateTest() {
         userRepository.save(user1);
         assertThatThrownBy(
-                () -> bookingServiceImpl.getAllBookings(PageRequest.of(0, 10), user1.getId(), "qwety")
+                () -> bookingServiceImpl.getAllBookings(user1.getId(), "qwety", 0, 10)
         ).isInstanceOf(StateException.class);
     }
 
@@ -506,7 +505,7 @@ public class BookingServiceImplTest extends Bookings {
     public void getAllBookingsForUserWhenUserNotFoundTest() {
         userRepository.save(user1);
         assertThatThrownBy(
-                () -> bookingServiceImpl.getAllBookings(PageRequest.of(0, 10), 50L, "ALL")
+                () -> bookingServiceImpl.getAllBookings(50L, "ALL", 0, 10)
         ).isInstanceOf(RuntimeException.class);
     }
 
@@ -520,7 +519,7 @@ public class BookingServiceImplTest extends Bookings {
         itemRepository.save(item2);
         createBookingsInDb();
         assertThatThrownBy(
-                () -> bookingServiceImpl.getAllBookingsOfOwner(PageRequest.of(0, 10), 50L, "ALL")
+                () -> bookingServiceImpl.getAllBookingsOfOwner(50L, "ALL", 0, 10)
         ).isInstanceOf(RuntimeException.class);
     }
 
@@ -529,7 +528,7 @@ public class BookingServiceImplTest extends Bookings {
         //given
         userRepository.save(user1);
         assertThatThrownBy(
-                () -> bookingServiceImpl.getAllBookingsOfOwner(PageRequest.of(0, 10), user1.getId(), "ALL")
+                () -> bookingServiceImpl.getAllBookingsOfOwner(user1.getId(), "ALL", 0, 10)
         ).isInstanceOf(RuntimeException.class);
     }
 
@@ -543,7 +542,7 @@ public class BookingServiceImplTest extends Bookings {
         currentBookingForItem1.setBooker(user2);
         currentBookingForItem1.setStatus(Status.APPROVED);
 
-          Thread.sleep(50);
+        Thread.sleep(50);
 
         currentBookingForItem2 = new Booking();
         currentBookingForItem2.setStart(LocalDateTime.now().minusDays(1));
@@ -552,7 +551,7 @@ public class BookingServiceImplTest extends Bookings {
         currentBookingForItem2.setBooker(user2);
         currentBookingForItem2.setStatus(Status.APPROVED);
 
-       Thread.sleep(50);
+        Thread.sleep(50);
 
         pastBookingForItem1 = new Booking();
         pastBookingForItem1.setStart(LocalDateTime.now().minusDays(2));
@@ -639,5 +638,8 @@ public class BookingServiceImplTest extends Bookings {
         bookingRepository.save(rejectedBookingForItem2);
     }
 
- */
+
 }
+
+
+

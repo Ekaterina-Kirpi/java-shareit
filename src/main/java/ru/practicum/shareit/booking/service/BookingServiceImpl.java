@@ -131,98 +131,117 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+
     private BookingListDto getListBookings(Pageable pageable, String state, Long userId, Boolean isOwner) {
         List<Long> itemsId;
+        List<BookingDtoResponse> bookingDtoResponses;
+
         switch (State.checkState(state.toUpperCase())) {
             case ALL:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository.findAllByItemIdInOrderByStartDesc(pageable, itemsId).stream()
-                                    .map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList())).build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInOrderByStartDesc(pageable, itemsId)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository.findAllByBookerIdOrderByStartDesc(pageable, userId).stream()
-                                    .map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList())).build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdOrderByStartDesc(pageable, userId)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             case CURRENT:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder().bookings(
-                            bookingRepository.findAllByItemIdInAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
-                                            pageable, itemsId, LocalDateTime.now(), LocalDateTime.now()).stream()
-                                    .map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList())).build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                                    pageable, itemsId, LocalDateTime.now(), LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder().bookings(
-                            bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
-                                            pageable, userId, LocalDateTime.now(), LocalDateTime.now()).stream()
-                                    .map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList())).build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+                                    pageable, userId, LocalDateTime.now(), LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             case PAST:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByItemIdInAndEndIsBeforeOrderByStartDesc(
-                                            pageable, itemsId, LocalDateTime.now()
-                                    ).stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInAndEndIsBeforeOrderByStartDesc(pageable, itemsId, LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByBookerIdAndEndIsBeforeOrderByStartDesc(
-                                            pageable, userId, LocalDateTime.now()
-                                    ).stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdAndEndIsBeforeOrderByStartDesc(pageable, userId, LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             case FUTURE:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByItemIdInAndStartIsAfterOrderByStartDesc(pageable, itemsId, LocalDateTime.now())
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInAndStartIsAfterOrderByStartDesc(pageable, itemsId, LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, LocalDateTime.now())
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdAndStartIsAfterOrderByStartDesc(pageable, userId, LocalDateTime.now())
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             case WAITING:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByItemIdInAndStatusIsOrderByStartDesc(pageable, itemsId, Status.WAITING)
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInAndStatusIsOrderByStartDesc(pageable, itemsId, Status.WAITING)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByBookerIdAndStatusIsOrderByStartDesc(pageable, userId, Status.WAITING)
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdAndStatusIsOrderByStartDesc(pageable, userId, Status.WAITING)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             case REJECTED:
                 if (isOwner) {
                     itemsId = itemRepository.findAllItemIdByOwnerId(userId);
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByItemIdInAndStatusIsOrderByStartDesc(pageable, itemsId, Status.REJECTED)
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByItemIdInAndStatusIsOrderByStartDesc(pageable, itemsId, Status.REJECTED)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 } else {
-                    return BookingListDto.builder()
-                            .bookings(bookingRepository
-                                    .findAllByBookerIdAndStatusIsOrderByStartDesc(pageable, userId, Status.REJECTED)
-                                    .stream().map(bookingMapper::toBookingDtoResponseFromBooking).collect(Collectors.toList()))
-                            .build();
+                    bookingDtoResponses = bookingRepository
+                            .findAllByBookerIdAndStatusIsOrderByStartDesc(pageable, userId, Status.REJECTED)
+                            .stream()
+                            .map(bookingMapper::toBookingDtoResponseFromBooking)
+                            .collect(Collectors.toList());
                 }
+                break;
             default:
                 throw new StateException("Unknown state: " + state);
         }
+
+        return BookingListDto.builder()
+                .bookings(bookingDtoResponses)
+                .build();
     }
 }
 

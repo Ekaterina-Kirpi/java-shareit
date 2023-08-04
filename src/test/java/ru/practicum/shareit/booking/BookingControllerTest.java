@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.controller.BookingController;
@@ -237,7 +236,7 @@ public class BookingControllerTest {
         verify(bookingServiceImpl, times(0)).getBookingById(anyLong(), anyLong());
     }
 
- /*   @Test
+    @Test
     @SneakyThrows
     public void getAllBookingsForUserTest() {
         //given
@@ -245,7 +244,7 @@ public class BookingControllerTest {
                 .bookings(List.of(bookingDtoResponse))
                 .build();
         //when
-        when(bookingServiceImpl.getAllBookings(any(Pageable.class), anyLong(), anyString()))
+        when(bookingServiceImpl.getAllBookings(anyLong(), anyString(), any(Integer.class), any(Integer.class)))
                 .thenReturn(bookingListDto);
         mvc.perform(get("/bookings")
                         .header(userIdHeader, 1)
@@ -257,7 +256,6 @@ public class BookingControllerTest {
     }
 
 
-
     @Test
     @SneakyThrows
     public void getAllBookingsForUserWithIncorrectStateTest() {
@@ -266,7 +264,7 @@ public class BookingControllerTest {
                 .bookings(List.of(bookingDtoResponse))
                 .build();
         //when
-        when(bookingServiceImpl.getAllBookings(any(Pageable.class), anyLong(), anyString()))
+        when(bookingServiceImpl.getAllBookings(anyLong(), anyString(), any(Integer.class), any(Integer.class)))
                 .thenThrow(StateException.class);
         mvc.perform(get("/bookings")
                         .header(userIdHeader, 1)
@@ -290,7 +288,7 @@ public class BookingControllerTest {
                 //then
                 .andExpectAll(
                         status().isBadRequest());
-        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
+        verify(bookingServiceImpl, times(0)).getAllBookings(anyLong(), anyString(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -304,40 +302,7 @@ public class BookingControllerTest {
                 .andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
-    }
-
-    @Test
-    @SneakyThrows
-    public void getAllBookingsForUserWithIncorrectParamSizeTest() {
-        //when
-        mvc.perform(get("/bookings")
-                        .header(userIdHeader, 1)
-                        .param("from", "0")
-                        .param("size", "10000"))
-                .andDo(print())
-                //then
-                .andExpectAll(status().isBadRequest());
-        verify(bookingServiceImpl, times(0)).getAllBookings(any(Pageable.class), anyLong(), anyString());
-    }
-
-    @Test
-    @SneakyThrows
-    public void getAllBookingsForItemsUserTest() {
-        //given
-        bookingListDto = BookingListDto.builder()
-                .bookings(List.of(bookingDtoResponse))
-                .build();
-        //when
-        when(bookingServiceImpl.getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString()))
-                .thenReturn(bookingListDto);
-        mvc.perform(get("/bookings/owner")
-                        .header(userIdHeader, 1)
-                        .param("from", "0")
-                        .param("size", "2"))
-                .andDo(print())
-                //then
-                .andExpectAll(status().isOk(), content().json(objectMapper.writeValueAsString(bookingListDto)));
+        verify(bookingServiceImpl, times(0)).getAllBookings(anyLong(), anyString(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -352,7 +317,7 @@ public class BookingControllerTest {
                 //then
                 .andExpectAll(status().isBadRequest());
         verify(bookingServiceImpl, times(0))
-                .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
+                .getAllBookingsOfOwner(anyLong(), anyString(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -367,24 +332,6 @@ public class BookingControllerTest {
                 //then
                 .andExpectAll(status().isBadRequest());
         verify(bookingServiceImpl, times(0))
-                .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
+                .getAllBookingsOfOwner(anyLong(), anyString(), any(Integer.class), any(Integer.class));
     }
-
-    @Test
-    @SneakyThrows
-    public void getAllBookingsForItemsUserWithIncorrectParamSizeTest() {
-        //when
-        mvc.perform(get("/bookings/owner")
-                        .header(userIdHeader, 1)
-                        .param("from", "0")
-                        .param("size", "10000"))
-                .andDo(print())
-                //then
-                .andExpectAll(status().isBadRequest());
-        verify(bookingServiceImpl, times(0))
-                .getAllBookingsOfOwner(any(Pageable.class), anyLong(), anyString());
-    }
-
-  */
 }
-

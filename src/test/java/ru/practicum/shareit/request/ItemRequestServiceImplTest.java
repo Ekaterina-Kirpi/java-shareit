@@ -64,7 +64,7 @@ public class ItemRequestServiceImplTest {
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
-/*
+
     @Test
     public void getPrivateRequestTest() {
         //given
@@ -73,7 +73,7 @@ public class ItemRequestServiceImplTest {
         var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user2.getId());
         //when
         var privateRequests = itemRequestServiceImpl
-                .getOwnerRequests(PageRequest.of(0, 2), user2.getId());
+                .getOwnerRequests(user2.getId(), 0, 2);
         var findRequest = itemRequestServiceImpl.getItemRequestById(user2.getId(), savedRequest.getId());
         //then
         assertThat(privateRequests.getRequests().get(0)).usingRecursiveComparison().isEqualTo(findRequest);
@@ -86,7 +86,7 @@ public class ItemRequestServiceImplTest {
         assertThatThrownBy(
                 //when
                 () -> itemRequestServiceImpl
-                        .getOwnerRequests(PageRequest.of(0, 2), 55L)
+                        .getOwnerRequests(55L, 0, 2)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -99,7 +99,7 @@ public class ItemRequestServiceImplTest {
         var savedRequest = itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
         var findRequest = itemRequestServiceImpl.getItemRequestById(user1.getId(), savedRequest.getId());
         //when
-        var otherRequest = itemRequestServiceImpl.getUserRequests(PageRequest.of(0, 2), user2.getId());
+        var otherRequest = itemRequestServiceImpl.getUserRequests(user2.getId(), 0, 2);
         //then
         assertThat(otherRequest.getRequests().get(0)).usingRecursiveComparison().isEqualTo(findRequest);
     }
@@ -111,7 +111,7 @@ public class ItemRequestServiceImplTest {
         itemRequestServiceImpl.createItemRequest(itemRequestDto, user1.getId());
         assertThatThrownBy(
                 //when
-                () -> itemRequestServiceImpl.getUserRequests(PageRequest.of(0, 2), 50L)
+                () -> itemRequestServiceImpl.getUserRequests(50L, 0, 2)
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
@@ -139,6 +139,8 @@ public class ItemRequestServiceImplTest {
                 //then
         ).isInstanceOf(ResponseStatusException.class);
     }
-
- */
 }
+
+
+
+

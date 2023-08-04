@@ -109,7 +109,7 @@ public class ItemRequestControllerTest {
                 .andExpectAll(status().isBadRequest());
         verify(itemRequestServiceImpl, times(0)).createItemRequest(any(ItemRequestDto.class), anyLong());
     }
-/*
+
     @Test
     @SneakyThrows
     public void getPrivateRequestsTest() {
@@ -119,7 +119,7 @@ public class ItemRequestControllerTest {
                 .requests(List.of(requestDtoResponse))
                 .build();
         //when
-        when(itemRequestServiceImpl.getOwnerRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
+        when(itemRequestServiceImpl.getOwnerRequests(anyLong(), any(Integer.class), any(Integer.class))).thenReturn(itemRequestListDto);
         mvc.perform(get("/requests")
                         .header(userIdHeader, 1)
                         .param("from", "0")
@@ -139,7 +139,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class ItemRequestControllerTest {
                         .param("size", "-1")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getOwnerRequests(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class ItemRequestControllerTest {
                 .requests(List.of(requestDtoResponse))
                 .build();
         //when
-        when(itemRequestServiceImpl.getUserRequests(any(PageRequest.class), anyLong())).thenReturn(itemRequestListDto);
+        when(itemRequestServiceImpl.getUserRequests(anyLong(), any(Integer.class), any(Integer.class))).thenReturn(itemRequestListDto);
         mvc.perform(get("/requests/all")
                         .header(userIdHeader, 1)
                         .param("from", "0")
@@ -197,7 +197,7 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getUserRequests(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @Test
@@ -210,21 +210,9 @@ public class ItemRequestControllerTest {
                         .param("size", "2")).andDo(print())
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
+        verify(itemRequestServiceImpl, times(0)).getUserRequests(anyLong(), any(Integer.class), any(Integer.class));
     }
 
-    @Test
-    @SneakyThrows
-    public void getOtherRequestsWitchIncorrectParamSizeTest() {
-        //when
-        mvc.perform(get("/requests/all")
-                        .header(userIdHeader, 1)
-                        .param("from", "0")
-                        .param("size", "24343")).andDo(print())
-                //then
-                .andExpectAll(status().isBadRequest());
-        verify(itemRequestServiceImpl, times(0)).getUserRequests(any(PageRequest.class), anyLong());
-    }
 
     @Test
     @SneakyThrows
@@ -261,6 +249,5 @@ public class ItemRequestControllerTest {
                 .andExpectAll(status().isBadRequest());
         verify(itemRequestServiceImpl, times(0)).getItemRequestById(anyLong(), anyLong());
     }
-
- */
 }
+

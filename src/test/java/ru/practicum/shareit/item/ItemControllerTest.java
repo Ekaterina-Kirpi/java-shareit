@@ -14,16 +14,23 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 
 @WebMvcTest(ItemController.class)
 @AutoConfigureMockMvc
@@ -253,21 +260,24 @@ public class ItemControllerTest {
                 .andExpectAll(status().isBadRequest());
         verify(itemServiceImpl, times(0)).getItemById(anyLong(), anyLong());
     }
-/*
+
     @SneakyThrows
     @Test
-    public void getPersonalItemsTest() {
+    public void getPersonalItemsTest() throws Exception {
         //given
+        var userId = 1L;
         var itemListDto = ItemListDto.builder().items(List.of(itemDtoResponse)).build();
+
         //when
-        when(itemServiceImpl.getAllItemsOwner(any(Pageable.class), anyLong())).thenReturn(itemListDto);
+        when(itemServiceImpl.getAllItemsOwner(userId, 0, 1)).thenReturn(itemListDto);
+
+        //then
         mvc.perform(get("/items")
                         .param("from", "0")
                         .param("size", "1")
-                        .header("X-Sharer-User-Id", 1))
-                //then
-                .andExpectAll(status().isOk(),
-                        content().json(objectMapper.writeValueAsString(itemListDto)));
+                        .header("X-Sharer-User-Id", String.valueOf(userId)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(itemListDto)));
     }
 
     @SneakyThrows
@@ -280,7 +290,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 0))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @SneakyThrows
@@ -293,7 +303,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 1))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @SneakyThrows
@@ -306,7 +316,7 @@ public class ItemControllerTest {
                         .header(userIdHeader, 1))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).getAllItemsOwner(any(Pageable.class), anyLong());
+        verify(itemServiceImpl, times(0)).getAllItemsOwner(anyLong(), any(Integer.class), any(Integer.class));
     }
 
     @SneakyThrows
@@ -315,7 +325,7 @@ public class ItemControllerTest {
         //given
         var itemListDto = ItemListDto.builder().items(List.of(itemDtoResponse)).build();
         //when
-        when(itemServiceImpl.search(any(Pageable.class), anyString())).thenReturn(itemListDto);
+        when(itemServiceImpl.search(anyString(), any(Integer.class), any(Integer.class))).thenReturn(itemListDto);
         mvc.perform(get("/items/search")
                         .param("from", "0")
                         .param("size", "1")
@@ -335,7 +345,7 @@ public class ItemControllerTest {
                         .param("text", "description"))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).search(any(Pageable.class), anyString());
+        verify(itemServiceImpl, times(0)).search(anyString(), any(Integer.class), any(Integer.class));
     }
 
     @SneakyThrows
@@ -348,9 +358,8 @@ public class ItemControllerTest {
                         .param("text", "description"))
                 //then
                 .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).search(any(Pageable.class), anyString());
+        verify(itemServiceImpl, times(0)).search(anyString(), any(Integer.class), any(Integer.class));
     }
-    */
 
     @SneakyThrows
     @Test
