@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 
 @Controller
@@ -41,14 +42,14 @@ public class UserController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteUser(@Min(1) @PathVariable("id") Long userId) {
+    public ResponseEntity<Object> deleteUser(@Positive @PathVariable("id") Long userId) {
         log.info("Запрос на удаление пользователя {}", userId);
         userServiceImpl.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("id") @Min(1) Long userId) {
+    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("id") @Positive Long userId) {
         log.info("Запрос на получение пользователя {}", userId);
         return ResponseEntity.ok()
                 .body(userServiceImpl.getUserById(userId));

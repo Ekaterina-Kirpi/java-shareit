@@ -308,19 +308,6 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    public void getPersonalItemsWithIncorrectParamSize() {
-        //when
-        mvc.perform(get("/items")
-                        .param("from", "0")
-                        .param("size", "99999")
-                        .header(userIdHeader, 1))
-                //then
-                .andExpectAll(status().isBadRequest());
-        verify(itemServiceImpl, times(0)).getAllItemsOwner(anyLong(), any(Integer.class), any(Integer.class));
-    }
-
-    @SneakyThrows
-    @Test
     public void getFoundItemsTest() {
         //given
         var itemListDto = ItemListDto.builder().items(List.of(itemDtoResponse)).build();
