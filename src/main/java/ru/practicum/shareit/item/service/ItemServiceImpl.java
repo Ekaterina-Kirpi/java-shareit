@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException {
+    public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException{
         Item itemNew = itemMapper.toItemFromItemDto(item);
         if (item.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId()).orElseThrow(() ->
