@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
@@ -45,8 +45,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException {
         Item itemNew = itemMapper.toItemFromItemDto(item);
         if (item.getRequestId() != null) {
-            ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId()).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND,
                             "Запрос " + item.getRequestId() + " не найден"));
 
             itemNew.setRequest(itemRequest);

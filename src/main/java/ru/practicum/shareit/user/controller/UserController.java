@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.dto.UserListDto;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 
 

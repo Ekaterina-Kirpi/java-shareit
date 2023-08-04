@@ -11,8 +11,6 @@ import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
@@ -73,7 +71,7 @@ public class ItemController {
     }
 
     @PostMapping("{itemId}/comment")
-    public ResponseEntity<CommentDtoResponse> addComment(@PathVariable @Min(1) Long itemId,
+    public ResponseEntity<CommentDtoResponse> addComment(@PathVariable @Positive Long itemId,
                                                          @RequestHeader(USER_ID_HEADER) @Positive Long userId,
                                                          @Valid @RequestBody CommentDto commentDto) {
         log.info("Запрос на добавление комментария для вещи {} пользователем {}", itemId, userId);
