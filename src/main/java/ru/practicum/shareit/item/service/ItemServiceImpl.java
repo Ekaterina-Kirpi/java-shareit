@@ -37,9 +37,8 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-
     private final ItemRequestRepository itemRequestRepository;
-    
+
     @Override
     public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException {
         Item itemNew = itemMapper.toItemFromItemDto(item);
