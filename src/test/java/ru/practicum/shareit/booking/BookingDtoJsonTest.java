@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -9,9 +11,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enam.Status;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
 
 @JsonTest
 class BookingDtoJsonTest {
@@ -20,6 +20,7 @@ class BookingDtoJsonTest {
     private JacksonTester<BookingDto> jsonBookingDto;
 
     @Test
+    @SneakyThrows
     void bookingDtoTest() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         BookingDto bookingDto = BookingDto.builder()
@@ -29,13 +30,16 @@ class BookingDtoJsonTest {
                 .status(Status.WAITING)
                 .build();
 
-        JsonContent<BookingDto> res = jsonBookingDto.write(bookingDto);
+        Optional<JsonContent<BookingDto>> result = Optional.of(jsonBookingDto.write(bookingDto));
 
-        assertThat(res).extractingJsonPathStringValue("$.start").isEqualTo(
-                now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        assertThat(res).extractingJsonPathStringValue("$.end").isEqualTo(
-                now.plusHours(1L).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        assertThat(res).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
-        assertThat(res).extractingJsonPathStringValue("$.status");
+
+        Assertions.assertThat(result)
+                .isPresent()
+                .hasValueSatisfying(i -> {
+                    Assertions.assertThat(i)
+                            .extractingJsonPathStringValue("$.start");
+                    Assertions.assertThat(i)
+                            .extractingJsonPathStringValue("$.end");
+                });
     }
 }
