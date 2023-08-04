@@ -334,4 +334,23 @@ public class BookingControllerTest {
         verify(bookingServiceImpl, times(0))
                 .getAllBookingsOfOwner(anyLong(), anyString(), any(Integer.class), any(Integer.class));
     }
+
+    @Test
+    @SneakyThrows
+    public void getAllBookingsForItemsUserTest() {
+        //given
+        bookingListDto = BookingListDto.builder()
+                .bookings(List.of(bookingDtoResponse))
+                .build();
+        //when
+        when(bookingServiceImpl.getAllBookingsOfOwner(anyLong(), anyString(), any(Integer.class), any(Integer.class))).thenReturn(bookingListDto);
+        mvc.perform(get("/bookings/owner")
+                        .header(userIdHeader, 1)
+                        .param("from", "0")
+                        .param("size", "2"))
+                .andDo(print())
+                //then
+                .andExpectAll(status().isOk(), content().json(objectMapper.writeValueAsString(bookingListDto)));
+    }
+
 }
