@@ -39,8 +39,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     private final ItemRequestRepository itemRequestRepository;
-
-
+    
     @Override
     public ItemDtoResponse createItem(ItemDto item, Long userId) throws ResponseStatusException {
         Item itemNew = itemMapper.toItemFromItemDto(item);
@@ -159,6 +158,7 @@ public class ItemServiceImpl implements ItemService {
             return itemMapper.toCommentDtoResponseFromComment(commentRepository.save(comment));
         }
     }
+
     @Transactional(readOnly = true)
     public void setComments(List<Item> items) {
         for (Item item : items) {
