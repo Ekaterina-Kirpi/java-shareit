@@ -42,14 +42,14 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUser(@Min(1) @PathVariable("id") Long userId) {
-        log.info("Запрос на удаление пользователя {}",userId);
+        log.info("Запрос на удаление пользователя {}", userId);
         userServiceImpl.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("id") @Min(1) Long userId) {
-        log.info("Запрос на получение пользователя {}",userId);
+        log.info("Запрос на получение пользователя {}", userId);
         return ResponseEntity.ok()
                 .body(userServiceImpl.getUserById(userId));
     }

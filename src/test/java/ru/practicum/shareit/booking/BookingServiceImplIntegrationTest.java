@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 @Sql(scripts = {"file:src/main/resources/schema.sql"})
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class BookingServiceImplTest extends Bookings {
+public class BookingServiceImplIntegrationTest extends Bookings {
     private final BookingServiceImpl bookingServiceImpl;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;

@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.dto.ItemRequestListDto;
@@ -32,7 +31,6 @@ import static ru.practicum.shareit.utilits.Sort.SORT_BY_CREATED_DESC;
 @Service
 @RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
-    private final ItemService itemService;
     private final ItemRequestMapper itemRequestMapper;
     private final ItemRequestRepository itemRequestRepository;
     private final ItemRepository itemRepository;
@@ -109,4 +107,4 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             itemRequest.setItems(new HashSet<>(items));
         }
     }
-}
+}l

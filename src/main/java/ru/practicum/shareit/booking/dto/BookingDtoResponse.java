@@ -17,4 +17,7 @@ public class BookingDtoResponse {
     private ItemLimitDto item;
     private UserLimitDto booker;
     private Status status;
+
+    public void setItemId(long l) {
+    }
 }
