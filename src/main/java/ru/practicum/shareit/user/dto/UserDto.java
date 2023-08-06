@@ -2,11 +2,15 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
 @Builder
+@ToString
 public class UserDto {
     @Size(max = 255)
     @NotEmpty(message = "Нужно представиться :)")

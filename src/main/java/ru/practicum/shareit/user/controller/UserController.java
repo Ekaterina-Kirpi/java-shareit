@@ -11,7 +11,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoResponse;
 import ru.practicum.shareit.user.dto.UserDtoUpdate;
 import ru.practicum.shareit.user.dto.UserListDto;
-import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -23,27 +23,27 @@ import javax.validation.constraints.Positive;
 @Validated
 @RequiredArgsConstructor
 public class UserController {
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserDtoResponse> createUser(@Valid @RequestBody UserDto userDto) {
         log.info("Запрос на добавление пользователя");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(userServiceImpl.createUser(userDto));
+                .body(userService.createUser(userDto));
     }
 
     @PatchMapping("{id}")
     public ResponseEntity<UserDtoResponse> updateUser(@RequestBody UserDtoUpdate userDtoUpdate, @PathVariable("id") Long userId) {
         log.info("Запрос на обновление пользователя");
         return ResponseEntity.ok()
-                .body(userServiceImpl.updateUser(userDtoUpdate, userId));
+                .body(userService.updateUser(userDtoUpdate, userId));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUser(@Positive @PathVariable("id") Long userId) {
         log.info("Запрос на удаление пользователя {}", userId);
-        userServiceImpl.deleteUser(userId);
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -51,14 +51,14 @@ public class UserController {
     public ResponseEntity<UserDtoResponse> getUserById(@PathVariable("id") @Positive Long userId) {
         log.info("Запрос на получение пользователя {}", userId);
         return ResponseEntity.ok()
-                .body(userServiceImpl.getUserById(userId));
+                .body(userService.getUserById(userId));
     }
 
     @GetMapping
     public ResponseEntity<UserListDto> getUsers() {
         log.info("Запрос на получение списка пользователей");
         return ResponseEntity.ok()
-                .body(userServiceImpl.getAllUsers());
+                .body(userService.getAllUsers());
     }
 
 }

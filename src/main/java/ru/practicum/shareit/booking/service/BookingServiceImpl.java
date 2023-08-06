@@ -36,8 +36,6 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
 
-
-    @Transactional
     @Override
     public BookingDtoResponse createBooking(Long bookerId, BookingDto bookingDto) {
         bookingDto.setStatus(Status.WAITING);
@@ -68,7 +66,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-    @Transactional
     @Override
     public BookingDtoResponse approveBooking(Long ownerId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->

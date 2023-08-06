@@ -24,4 +24,6 @@ public interface ItemRepository extends PagingAndSortingRepository<Item, Long> {
             "JOIN User AS u ON i.owner.id=u.id " +
             "WHERE i.owner.id = :ownerId")
     List<Long> findAllItemIdByOwnerId(@Param("ownerId") Long ownerId);
+
+
 }

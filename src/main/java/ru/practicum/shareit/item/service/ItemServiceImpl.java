@@ -119,6 +119,9 @@ public class ItemServiceImpl implements ItemService {
         return ItemListDto.builder().items(personalItems).build();
     }
 
+
+
+
     @Override
     @Transactional(readOnly = true)
     public ItemListDto search(String text, int from, int size) {
@@ -163,5 +166,8 @@ public class ItemServiceImpl implements ItemService {
             item.setComments(new HashSet<>(comments));
         }
     }
+
+
+
 
 }

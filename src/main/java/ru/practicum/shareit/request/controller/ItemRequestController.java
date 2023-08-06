@@ -10,7 +10,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.dto.ItemRequestListDto;
 import ru.practicum.shareit.request.dto.RequestDtoResponse;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
+import ru.practicum.shareit.request.service.ItemRequestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -25,14 +25,14 @@ import static ru.practicum.shareit.utilits.Constants.*;
 @Validated
 @RequiredArgsConstructor
 public class ItemRequestController {
-    private final ItemRequestServiceImpl itemRequestServiceImpl;
+    private final ItemRequestService itemRequestService;
 
     @PostMapping
     public ResponseEntity<ItemRequestDtoResponse> createRequest(@RequestHeader(USER_ID_HEADER) @Positive Long requesterId,
                                                                 @RequestBody @Valid ItemRequestDto itemRequestDto) {
         log.info("Запрос на добавление запроса");
         return ResponseEntity.ok()
-                .body(itemRequestServiceImpl.createItemRequest(itemRequestDto, requesterId));
+                .body(itemRequestService.createItemRequest(itemRequestDto, requesterId));
     }
 
     @GetMapping
@@ -45,7 +45,7 @@ public class ItemRequestController {
             @Positive int size) {
         log.info("Запрос на получение запросов владельца");
         return ResponseEntity.ok()
-                .body(itemRequestServiceImpl
+                .body(itemRequestService
                         .getOwnerRequests(requesterId, from, size));
     }
 
@@ -59,7 +59,7 @@ public class ItemRequestController {
             @Positive int size) {
         log.info("Запрос на получение запросов пользователя");
         return ResponseEntity.ok()
-                .body(itemRequestServiceImpl
+                .body(itemRequestService
                         .getUserRequests(requesterId, from, size));
     }
 
@@ -69,6 +69,6 @@ public class ItemRequestController {
             @PathVariable @Min(1) Long requestId) {
         log.info("Запрос на получение запроса {}  у пользователя {} ", requestId, userId);
         return ResponseEntity.ok()
-                .body(itemRequestServiceImpl.getItemRequestById(userId, requestId));
+                .body(itemRequestService.getItemRequestById(userId, requestId));
     }
 }

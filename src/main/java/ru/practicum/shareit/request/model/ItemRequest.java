@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -16,6 +15,11 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@Builder
 @Table(name = "requests")
 public class ItemRequest {
     @Id
