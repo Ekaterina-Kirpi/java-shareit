@@ -103,21 +103,18 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    public void createItemWithItemRequestTest() {
+    public void createItemWithNotExistingItemRequestTest() {
         //given
         userRepository.save(user1);
         userRepository.save(user2);
         itemRequestRepository.save(itemRequest1);
-        item1Dto.setRequestId(itemRequest1.getId());
-
-        //when
-        var savedItem = itemServiceImpl.createItem(item1Dto, user1.getId());
-        var findItem = itemServiceImpl.getItemById(user2.getId(), savedItem.getId());
-        var saveRequest = itemRequestRepository.findById(itemRequest1.getId()).get();
-        //then
-        assertThat(savedItem).usingRecursiveComparison().ignoringFields("comments").isEqualTo(findItem);
-        assertThat(saveRequest.equals(itemRequest1)).isFalse();
-        assertThat(user1.equals(user2)).isFalse();
+        item1Dto.setRequestId(2L);
+        assertThatThrownBy(
+                //when
+                () -> itemServiceImpl.createItem(item1Dto, user1.getId())
+        )
+                //then
+                .isInstanceOf(ResponseStatusException.class);
     }
 
     @Test
