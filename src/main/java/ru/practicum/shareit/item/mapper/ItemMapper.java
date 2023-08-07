@@ -15,7 +15,7 @@ public interface ItemMapper {
     Item toItemFromItemDto(ItemDto itemDto);
 
     @Mapping(source = "booker.id", target = "bookerId")
-    BookingLimitDto toBookingShortDtoFromBooking(Booking booking);
+    BookingLimitDto toBookingLimitDtoFromBooking(Booking booking);
 
     Comment toCommentFromCommentDto(CommentDto commentDto);
 

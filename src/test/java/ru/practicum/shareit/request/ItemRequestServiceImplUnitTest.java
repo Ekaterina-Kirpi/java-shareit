@@ -85,6 +85,7 @@ public class ItemRequestServiceImplUnitTest {
                 .build();
         itemRequest = mapper.toItemRequestFromItemRequestDto(itemRequestDto);
         itemRequest.setItems(new HashSet<>(List.of(item1)));
+        item1.setRequest(itemRequest);
     }
 
     @Test
@@ -116,8 +117,8 @@ public class ItemRequestServiceImplUnitTest {
 
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
-        when(itemRepository.findAllByRequestId(anyLong())).thenReturn(List.of(item1));
-        when(commentRepository.findByItemId(anyLong())).thenReturn(List.of(comment1));
+        when(itemRepository.findAllByRequestIdIn(any())).thenReturn(List.of(item1));
+        when(commentRepository.findByItemIdIn(any())).thenReturn(List.of(comment1));
 
         RequestDtoResponse actual = service.getItemRequestById(user1.getId(), itemRequest.getId());
 
@@ -147,7 +148,6 @@ public class ItemRequestServiceImplUnitTest {
     }
 
 }
-
 
 
 

@@ -22,8 +22,11 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.utilits.Sort.SORT_BY_CREATED_DESC;
 
@@ -85,28 +88,33 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Запрос " + requestId + " не найден")
         );
-
         setItems(List.of(itemRequest));
 
-        return itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(
-                itemRequestRepository.findById(requestId)
-                        .orElseThrow(
-                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Запрос " + requestId + " не найден")
-                        )
-        );
+        return itemRequestMapper.toListRequestDtoToResponseFromListItemRequest(itemRequest);
     }
 
     @Transactional(readOnly = true)
     public void setItems(List<ItemRequest> itemRequests) {
+        List<Long> requestIds = itemRequests.stream()
+                .map(ItemRequest::getId)
+                .collect(Collectors.toList());
+        List<Item> items = itemRepository.findAllByRequestIdIn(requestIds);
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+        List<Comment> comments = commentRepository.findByItemIdIn(itemIds);
+        Map<Long, List<Comment>> commentsMap = comments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
+        for (Item item : items) {
+            List<Comment> itemComments = commentsMap.getOrDefault(item.getId(), Collections.emptyList());
+            item.setComments(new HashSet<>(itemComments));
+        }
         for (ItemRequest itemRequest : itemRequests) {
-            List<Item> items = itemRepository.findAllByRequestId(itemRequest.getId());
-            for (Item item : items) {
-                List<Comment> comments = commentRepository.findByItemId(item.getId());
-                item.setComments(new HashSet<>(comments));
-            }
-            itemRequest.setItems(new HashSet<>(items));
+            List<Item> requestItems = items.stream()
+                    .filter(item -> itemRequest.getId().equals(item.getRequest().getId()))
+                    .collect(Collectors.toList());
+            itemRequest.setItems(new HashSet<>(requestItems));
         }
     }
-
-
 }
+

@@ -15,22 +15,26 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Builder
 @Table(name = "requests")
 public class ItemRequest {
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
     private Long id;
+    @EqualsAndHashCode.Include
     @Column(nullable = false, length = 1000)
     private String description;
+    @EqualsAndHashCode.Include
     @ManyToOne
     @JoinColumn(name = "requester_id")
     private User requester;
+    @EqualsAndHashCode.Include
     @Column
     private LocalDateTime created;
     @Transient

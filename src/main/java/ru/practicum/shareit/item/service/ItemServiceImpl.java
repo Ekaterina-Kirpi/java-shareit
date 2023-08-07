@@ -22,9 +22,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.utilits.ShareItPageRequest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -91,8 +90,8 @@ public class ItemServiceImpl implements ItemService {
             Booking nextBooking = bookingRepository
                     .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(), Status.APPROVED)
                     .orElse(null);
-            itemDtoResponse.setLastBooking(itemMapper.toBookingShortDtoFromBooking(lastBooking));
-            itemDtoResponse.setNextBooking(itemMapper.toBookingShortDtoFromBooking(nextBooking));
+            itemDtoResponse.setLastBooking(itemMapper.toBookingLimitDtoFromBooking(lastBooking));
+            itemDtoResponse.setNextBooking(itemMapper.toBookingLimitDtoFromBooking(nextBooking));
             return itemDtoResponse;
         }
         return itemDtoResponse;
@@ -106,21 +105,33 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
-        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(pageable, userId);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
         setComments(items);
-        List<ItemDtoResponse> personalItems = items.stream().map(itemMapper::toItemDtoResponseFromItem).collect(toList());
-        for (ItemDtoResponse item : personalItems) {
-            item.setLastBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
-                    LocalDateTime.now(), Status.APPROVED).orElse(null)));
-            item.setNextBooking(itemMapper.toBookingShortDtoFromBooking(bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
-                    item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null)
-            ));
+        List<ItemDtoResponse> personalItems = new ArrayList<>();
+        List<Booking> bookings = bookingRepository.findAllByItemIdInAndStartBeforeAndStatusOrderByItemIdAscEndDesc(
+                items.stream().map(Item::getId).collect(Collectors.toList()),
+                LocalDateTime.now(), Status.APPROVED
+        );
+        Map<Long, List<Booking>> itemBookingsMap = bookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+        for (Item item : items) {
+            ItemDtoResponse itemDto = itemMapper.toItemDtoResponseFromItem(item);
+            List<Booking> itemBookings = itemBookingsMap.get(item.getId());
+            if (itemBookings != null && !itemBookings.isEmpty()) {
+                Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
+                        LocalDateTime.now(), Status.APPROVED).orElse(null);
+                Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
+                        item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null);
+                itemDto.setLastBooking(itemMapper.toBookingLimitDtoFromBooking(lastBooking));
+                itemDto.setNextBooking(itemMapper.toBookingLimitDtoFromBooking(nextBooking));
+            } else {
+                itemDto.setLastBooking(null);
+                itemDto.setNextBooking(null);
+            }
+            personalItems.add(itemDto);
         }
         return ItemListDto.builder().items(personalItems).build();
     }
-
-
-
 
     @Override
     @Transactional(readOnly = true)
@@ -161,13 +172,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     public void setComments(List<Item> items) {
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+        List<Comment> allComments = commentRepository.findByItemIdIn(itemIds);
+        Map<Long, List<Comment>> commentsMap = allComments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
         for (Item item : items) {
-            List<Comment> comments = commentRepository.findByItemId(item.getId());
+            List<Comment> comments = commentsMap.getOrDefault(item.getId(), Collections.emptyList());
             item.setComments(new HashSet<>(comments));
         }
     }
-
-
-
-
 }
