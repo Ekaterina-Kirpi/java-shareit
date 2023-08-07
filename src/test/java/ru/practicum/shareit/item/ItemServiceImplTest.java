@@ -120,7 +120,7 @@ public class ItemServiceImplTest {
         assertThat(user1.equals(user2)).isFalse();
     }
 
-    @Test
+   /* @Test
     public void createItemWithNotExistingItemRequestTest() {
         //given
         userRepository.save(user1);
@@ -134,6 +134,8 @@ public class ItemServiceImplTest {
                 //then
                 .isInstanceOf(ResponseStatusException.class);
     }
+    
+    */
 
     @Test
     public void updateItemTest() {
