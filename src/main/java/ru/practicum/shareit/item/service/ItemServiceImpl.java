@@ -101,7 +101,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public ItemListDto getAllItemsOwner(Long userId, int from, int size) {
-        Pageable pageable = new ShareItPageRequest(from, size);
         if (!userRepository.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
