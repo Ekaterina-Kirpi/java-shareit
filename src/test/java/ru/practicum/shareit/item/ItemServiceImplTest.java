@@ -120,23 +120,6 @@ public class ItemServiceImplTest {
         assertThat(user1.equals(user2)).isFalse();
     }
 
-   /* @Test
-    public void createItemWithNotExistingItemRequestTest() {
-        //given
-        userRepository.save(user1);
-        userRepository.save(user2);
-        itemRequestRepository.save(itemRequest1);
-        item1Dto.setRequestId(2L);
-        assertThatThrownBy(
-                //when
-                () -> itemServiceImpl.createItem(item1Dto, user1.getId())
-        )
-                //then
-                .isInstanceOf(ResponseStatusException.class);
-    }
-    
-    */
-
     @Test
     public void updateItemTest() {
         //given
