@@ -18,4 +18,4 @@ public class BookingDtoResponse {
     private UserLimitDto booker;
     private Status status;
 
-    }
+}

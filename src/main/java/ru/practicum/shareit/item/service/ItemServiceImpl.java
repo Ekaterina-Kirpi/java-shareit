@@ -105,30 +105,43 @@ public class ItemServiceImpl implements ItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
         List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
-        setComments(items);
         List<ItemDtoResponse> personalItems = new ArrayList<>();
-        List<Booking> bookings = bookingRepository.findAllByItemIdInAndStartBeforeAndStatusOrderByItemIdAscEndDesc(
+
+        List<Booking> beforeBookings = bookingRepository.findAllByItemIdInAndStartBeforeAndStatusOrderByItemIdAscEndDesc(
                 items.stream().map(Item::getId).collect(Collectors.toList()),
                 LocalDateTime.now(), Status.APPROVED
         );
-        Map<Long, List<Booking>> itemBookingsMap = bookings.stream()
+        List<Booking> afterBookings = bookingRepository.findAllByItemIdInAndStartAfterAndStatusOrderByItemIdAscStartAsc(
+                items.stream().map(Item::getId).collect(Collectors.toList()),
+                LocalDateTime.now(), Status.APPROVED
+        );
+        Map<Long, List<Booking>> beforeBookingsMap = beforeBookings.stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+        Map<Long, List<Booking>> afterBookingsMap = afterBookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+
         for (Item item : items) {
             ItemDtoResponse itemDto = itemMapper.toItemDtoResponseFromItem(item);
-            List<Booking> itemBookings = itemBookingsMap.get(item.getId());
-            if (itemBookings != null && !itemBookings.isEmpty()) {
-                Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(item.getId(),
-                        LocalDateTime.now(), Status.APPROVED).orElse(null);
-                Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
-                        item.getId(), LocalDateTime.now(), Status.APPROVED).orElse(null);
+
+            List<Booking> lastBookings = beforeBookingsMap.get(item.getId());
+            if (lastBookings != null && !lastBookings.isEmpty()) {
+                Booking lastBooking = lastBookings.get(0);
                 itemDto.setLastBooking(itemMapper.toBookingLimitDtoFromBooking(lastBooking));
-                itemDto.setNextBooking(itemMapper.toBookingLimitDtoFromBooking(nextBooking));
             } else {
                 itemDto.setLastBooking(null);
+            }
+
+            List<Booking> nextBookings = afterBookingsMap.get(item.getId());
+            if (nextBookings != null && !nextBookings.isEmpty()) {
+                Booking nextBooking = nextBookings.get(0);
+                itemDto.setNextBooking(itemMapper.toBookingLimitDtoFromBooking(nextBooking));
+            } else {
                 itemDto.setNextBooking(null);
             }
+
             personalItems.add(itemDto);
         }
+
         return ItemListDto.builder().items(personalItems).build();
     }
 
