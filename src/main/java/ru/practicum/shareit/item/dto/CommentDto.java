@@ -1,15 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
 @Data
+@Builder
+@Jacksonized
 public class CommentDto {
-    private Long id;
-    @NotBlank(message = "Нужно что-то написать")
+    @NotBlank(message = "поле text не должно быть пустым")
     private String text;
-    private String authorName;
-    private LocalDateTime created;
 }

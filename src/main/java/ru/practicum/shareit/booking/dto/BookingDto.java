@@ -1,25 +1,31 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.booking.enam.Status;
 
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
+import static ru.practicum.shareit.utilits.Constants.DATE_PATTERN;
+
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class BookingDto {
-    private long id;
-    private ItemDto item;
-    private UserDto booker;
-    private BookingStatus status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
+    @NotNull(message = "Укажите дату, поле не может быть пустым")
+    @FutureOrPresent(message = "Дата начала не может быть в прошлом")
     private LocalDateTime start;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_PATTERN)
+    @Future(message = "Дата завершения не может быть в прошлом")
+    @NotNull(message = "Укажите дату, поле не может быть пустым")
     private LocalDateTime end;
+    @NotNull(message = "Поле не может быть пустым")
+    @Min(value = 1, message = "Некорректный itemId")
+    private Long itemId;
+    private Status status;
 }
