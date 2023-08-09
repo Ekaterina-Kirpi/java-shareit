@@ -105,6 +105,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь " + userId + " не найден");
         }
         List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+        setComments(items);
         List<ItemDtoResponse> personalItems = new ArrayList<>();
 
         List<Booking> beforeBookings = bookingRepository.findAllByItemIdInAndStartBeforeAndStatusOrderByItemIdAscEndDesc(
