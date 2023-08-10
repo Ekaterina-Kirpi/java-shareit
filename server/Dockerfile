@@ -3,4 +3,4 @@ COPY target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 
 # for local postman tests
-ENV TZ="Europe/Moscow"
+#ENV TZ="Europe/Moscow"
