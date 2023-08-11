@@ -66,7 +66,7 @@ public class ItemRequestController {
     @GetMapping("{requestId}")
     public ResponseEntity<RequestDtoResponse> getItemRequestById(
             @RequestHeader(USER_ID_HEADER) @Positive Long userId,
-            @PathVariable @Min(1) Long requestId) {
+            @PathVariable @Positive Long requestId) {
         log.info("Запрос на получение запроса {}  у пользователя {} ", requestId, userId);
         return ResponseEntity.ok()
                 .body(itemRequestService.getItemRequestById(userId, requestId));

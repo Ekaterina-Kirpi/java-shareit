@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.enam;
 
+import ru.practicum.shareit.exception.StateException;
+
 /**
  * ALL  получение списка всех бронирований текущего пользователя.
  * CURRENT  текущие бронирования
@@ -14,11 +16,12 @@ public enum State {
     ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED, UNSUPPORTED_STATUS;
 
     public static State checkState(String value) {
-        for (State state : values()) {
-            if (state.toString().equals(value)) {
-                return state;
-            }
+        try {
+            return State.valueOf(value.toUpperCase());
+        } catch (StateException e) {
+            throw new StateException("Unknown state: " + value);
         }
-        return UNSUPPORTED_STATUS;
+
     }
+
 }
